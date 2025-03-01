@@ -1,0 +1,13 @@
+CATKIN_IGNORE
+
+# Ignore build and install directories
+build/
+install/
+log/
+.colcon/
+.ros/
+.vscode/
+.idea/
+__pycache__/
+*.pyc
+*.pyo
