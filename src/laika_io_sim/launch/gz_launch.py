@@ -31,6 +31,8 @@ def generate_launch_description():
             "/forcetorque/rl_knee@geometry_msgs/msg/WrenchStamped[ignition.msgs.Wrench",
             "/forcetorque/rl_hip@geometry_msgs/msg/WrenchStamped[ignition.msgs.Wrench",
             "/forcetorque/rl_lat@geometry_msgs/msg/WrenchStamped[ignition.msgs.Wrench"
+        ] + [
+            "/robot_joint_states@sensor_msgs/msg/JointState[ignition.msgs.Model"
         ]
     )
 
