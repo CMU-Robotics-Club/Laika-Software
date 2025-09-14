@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'placeholder = laika_control.placeholder:main'
+            'placeholder = laika_control.placeholder:main',
+            'position_controller = laika_control.position_controller:main',
         ],
     },
 )
