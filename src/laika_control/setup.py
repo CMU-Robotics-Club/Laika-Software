@@ -22,6 +22,7 @@ setup(
         'console_scripts': [
             'placeholder = laika_control.placeholder:main',
             'position_controller = laika_control.position_controller:main',
+            'joint_controller_test = laika_control.joint_controller_test:main'
         ],
     },
 )
