@@ -24,7 +24,8 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'input = laika_control.input:main'
+            'input = laika_control.input:main',
+            'joint_controller_test = laika_control.joint_controller:main'
         ],
     },
 )
