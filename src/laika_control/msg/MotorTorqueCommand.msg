@@ -1,1 +1,0 @@
-float32 torque_setpoint  # Nm
