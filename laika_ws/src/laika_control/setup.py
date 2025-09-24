@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'laika_io'
+package_name = 'laika_control'
 
 setup(
     name=package_name,
@@ -13,14 +13,18 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='alex',
-    maintainer_email='alexvippoliti@gmail.com',
+    maintainer='mehul',
+    maintainer_email='mehul@todo.todo',
     description='TODO: Package description',
     license='TODO: License declaration',
-    tests_require=['pytest'],
+    extras_require={
+        'test': [
+            'pytest',
+        ],
+    },
     entry_points={
         'console_scripts': [
-            'placeholder = laika_io.placeholder:main'
+            'input = laika_control.input:main'
         ],
     },
 )

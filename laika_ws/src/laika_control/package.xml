@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>laika_interface</name>
+  <name>laika_control</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="alexvippoliti@gmail.com">alex</maintainer>
-  <license>TODO: License declaration</license>
+  <description>High level control of laika the robot dog</description>
+  <maintainer email="officers@roboticsclub.org">CMU Robotics Club</maintainer>
+  <license>MIT5</license>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
