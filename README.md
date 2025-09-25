@@ -4,6 +4,14 @@ A repository for the software packages for the Laika quadruped robot.
 ## Dependencies
 Follow these instructions to avoid dependency hell.
 
+### Install ROS2 Jazzy
+Install ROS2 jazzy following these instructions:
+(You need Ubuntu 24.04 for it)
+
+https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html
+
+Make sure to follow **all** the steps, including installing the development tools.
+
 ### Setup rosdep
 To automatically install all necessary dependencies, this projects uses rosdep (https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Rosdep.html). 
 Install Rosdep using these commands:
@@ -38,3 +46,18 @@ Don't forget to source to workspace:
 ```sh
 source ./install/local_setup.sh
 ```
+## Run the Simulation
+After building and sourcing the workspace:
+```sh
+ros2 launch laika_sim simulation.launch.py
+```
+To start the simulation with the robot flying (good for some testing):
+```sh
+ros2 launch laika_sim simulation.launch.py fly:=true
+```
+## Make the joints move
+After starting the simulation, open a seperate terminal and run:
+```sh
+ros2 run laika_control joint_controller_test
+```
+
