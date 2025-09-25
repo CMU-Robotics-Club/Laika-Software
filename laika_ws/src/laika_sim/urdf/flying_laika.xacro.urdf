@@ -13,6 +13,79 @@
     <color rgba="0.3 0.4 0.6 1"/>
   </material>
 
+  <!-- <link name="fl_sphere"> -->
+  <!--   <visual> -->
+  <!--     <geometry> -->
+  <!--       <sphere radius="0.02" /> -->
+  <!--     </geometry> -->
+  <!--     <material name="red"/> -->
+  <!--   </visual> -->
+  <!--   <collision> -->
+  <!--     <geometry> -->
+  <!--       <sphere radius="0.02" /> -->
+  <!--     </geometry> -->
+  <!--   </collision> -->
+  <!-- </link> -->
+  <!-- <link name="fr_sphere"> -->
+  <!--   <visual> -->
+  <!--     <geometry> -->
+  <!--       <sphere radius="0.02" /> -->
+  <!--     </geometry> -->
+  <!--     <material name="red"/> -->
+  <!--   </visual> -->
+  <!--   <collision> -->
+  <!--     <geometry> -->
+  <!--       <sphere radius="0.02" /> -->
+  <!--     </geometry> -->
+  <!--   </collision> -->
+  <!-- </link> -->
+  <!-- <link name="bl_sphere"> -->
+  <!--   <visual> -->
+  <!--     <geometry> -->
+  <!--       <sphere radius="0.02" /> -->
+  <!--     </geometry> -->
+  <!--     <material name="red"/> -->
+  <!--   </visual> -->
+  <!--   <collision> -->
+  <!--     <geometry> -->
+  <!--       <sphere radius="0.02" /> -->
+  <!--     </geometry> -->
+  <!--   </collision> -->
+  <!-- </link> -->
+  <!-- <link name="br_sphere"> -->
+  <!--   <visual> -->
+  <!--     <geometry> -->
+  <!--       <sphere radius="0.02" /> -->
+  <!--     </geometry> -->
+  <!--     <material name="red"/> -->
+  <!--   </visual> -->
+  <!--   <collision> -->
+  <!--     <geometry> -->
+  <!--       <sphere radius="0.02" /> -->
+  <!--     </geometry> -->
+  <!--   </collision> -->
+  <!-- </link> -->
+  <!-- <joint name="fl_foot" type="fixed"> -->
+  <!--   <origin rpy="0 0 0" xyz="-0.4 -0.05 0.015"/> -->
+  <!--   <parent link="fl_lower_link"/> -->
+  <!--   <child link="fl_sphere"/> -->
+  <!-- </joint> -->
+  <!-- <joint name="fr_foot" type="fixed"> -->
+  <!--   <origin rpy="0 0 0" xyz="-0.4 -0.05 0.015"/> -->
+  <!--   <parent link="fr_lower_link"/> -->
+  <!--   <child link="fr_sphere"/> -->
+  <!-- </joint> -->
+  <!-- <joint name="bl_foot" type="fixed"> -->
+  <!--   <origin rpy="0 0 0" xyz="-0.4 -0.05 0.015"/> -->
+  <!--   <parent link="bl_lower_link"/> -->
+  <!--   <child link="bl_sphere"/> -->
+  <!-- </joint> -->
+  <!-- <joint name="br_foot" type="fixed"> -->
+  <!--   <origin rpy="0 0 0" xyz="-0.4 -0.05 0.015"/> -->
+  <!--   <parent link="br_lower_link"/> -->
+  <!--   <child link="br_sphere"/> -->
+  <!-- </joint> -->
+
   <!-- Make Laika fly in the air -->
   <link name="world"/>
   <joint name="world_to_base" type="fixed">
