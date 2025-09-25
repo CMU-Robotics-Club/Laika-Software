@@ -13,6 +13,14 @@
     <color rgba="0.3 0.4 0.6 1"/>
   </material>
 
+  <!-- Make Laika fly in the air -->
+  <link name="world"/>
+  <joint name="world_to_base" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 1"/>
+    <parent link="world"/>
+    <child link="base"/>
+  </joint>
+
   <!-- Added to avoid warning about base link having inertia -->
   <link name="base"/>
   <joint name="base_to_body" type="fixed">

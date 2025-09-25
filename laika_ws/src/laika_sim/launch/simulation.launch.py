@@ -8,21 +8,48 @@ from launch.substitutions import Command, FindExecutable, LaunchConfiguration, P
 
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
+import sys
 
 
 def generate_launch_description():
+    fly = "false"
+    log_level = 'error'
+
+    for arg in sys.argv:
+        if arg.startswith("info:="):
+            content = arg.split(":=")[1]
+            if content == "true":
+                log_level = 'info'
+        if arg.startswith("debug:="):
+            content = arg.split(":=")[1]
+            if content == "true":
+                log_level = 'debug'
+        if arg.startswith("fly:="):
+            content = arg.split(":=")[1]
+            if content == "true":
+                fly = "true"
+    
+    print("")
+    print("log_level:           " + str(log_level))
+    print("fly:                 " + str(fly))
+    print("")
     # Launch Arguments
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
     ld = LaunchDescription()
 
     # Get URDF via xacro
+    if fly=="true":
+        urdf_file_name = "flying_laika.xacro.urdf"
+    else:
+        urdf_file_name = "laika.xacro.urdf"
+
     robot_description = Command(
         [
             PathJoinSubstitution([FindExecutable(name='xacro')]),
             ' ',
             PathJoinSubstitution(
-                [FindPackageShare('laika_sim'), 'urdf', 'laika.xacro.urdf']
+                [FindPackageShare('laika_sim'), 'urdf', urdf_file_name]
                 ),
             ]
     )
