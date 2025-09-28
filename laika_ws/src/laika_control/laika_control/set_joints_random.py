@@ -2,26 +2,27 @@ import rclpy
 from rclpy.node import Node
 import random
 from control_msgs.msg import MultiDOFCommand
+import math
 
 class SetJointsRandom(Node):
     def __init__(self):
         super().__init__('SetJointsRandom')
         self.publisher_ = self.create_publisher(MultiDOFCommand, '/pidf_controller/reference', 10)
         self.timer_ = self.create_timer(3.0, self.publish_trajectory) # Publish every second
-        self.dof_names = ['fl_lat_joint', 'fl_hip_joint', 'fl_knee_joint',
-                          'fr_lat_joint', 'fr_hip_joint', 'fr_knee_joint',
-                          'br_lat_joint', 'br_hip_joint', 'br_knee_joint',
-                          'bl_lat_joint', 'bl_hip_joint', 'bl_knee_joint'
+        self.dof_names = ['fl_lat_joint', 'fl_hip_joint', 'fl_knee_joint'
+                          # 'fr_lat_joint', 'fr_hip_joint', 'fr_knee_joint',
+                          # 'br_lat_joint', 'br_hip_joint', 'br_knee_joint',
+                          # 'bl_lat_joint', 'bl_hip_joint', 'bl_knee_joint'
                           ]
 
     def publish_trajectory(self):
         pid_msg = MultiDOFCommand()
         pid_msg.dof_names = self.dof_names
 
-        pid_msg.values = [0.0, -(random.random()*1), (random.random()*1),
-                          0.0, -(random.random()*1), (random.random()*1),
-                          0.0, -(random.random()*1), (random.random()*1),
-                          0.0, -(random.random()*1), (random.random()*1)
+        pid_msg.values = [(random.random()*0.8)-0.5, (random.random()*math.pi/2), (random.random()*math.pi)
+                          # 0.0, -(random.random()*1), (random.random()*1),
+                          # 0.0, -(random.random()*1), (random.random()*1),
+                          # 0.0, -(random.random()*1), (random.random()*1)
                           ]
 
         self.publisher_.publish(pid_msg)
