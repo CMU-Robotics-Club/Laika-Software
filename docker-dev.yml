@@ -1,0 +1,19 @@
+services:
+  main:
+    build: ./
+    volumes:
+      - ./laika_ws:/laika_ws
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    stdin_open: true # docker run -i
+    tty: true # docker run -t
+    env_file: .env.dev
+    environment:
+      - DISPLAY=host.docker.internal:0
+      - QT_X11_NO_MITSHM=1
+    hostname: main
+    ports:
+      - "0.0.0.0:8765:8765" # foxglove bridge
+      - "0.0.0.0:8760:8760" # Asset server for loading stuff into foxglove
+    platform: "linux/amd64"
+    device_cgroup_rules:
+      - "c *:* rmw"

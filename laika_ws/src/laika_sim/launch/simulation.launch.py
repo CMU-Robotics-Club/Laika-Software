@@ -80,7 +80,7 @@ def generate_launch_description():
                                        'launch',
                                        'gz_sim.launch.py'])]),
                 launch_arguments={
-                    'gz_args': [' -r -v 1 ', world_path],
+                    'gz_args': [' -v 1 -s -r --headless-rendering ', world_path],
                     'on_exit_shutdown': 'True'
                     }.items(),
                 )
