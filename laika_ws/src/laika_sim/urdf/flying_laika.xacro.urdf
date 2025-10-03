@@ -200,7 +200,7 @@
     <parent link="body_link"/>
     <child link="fl_hip_link"/>
     <axis xyz="1 0 0"/>
-    <limit effort="1000" lower="-0.5" upper="0.3" velocity="100"/>
+    <limit effort="100" lower="-0.5" upper="0.3" velocity="100"/>
     <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
   <joint name="fl_hip_joint" type="revolute">
@@ -208,7 +208,7 @@
     <parent link="fl_hip_link"/>
     <child link="fl_upper_link"/>
     <axis xyz="0 0 -1"/>
-    <limit effort="1000" lower="0" upper="${pi/2}" velocity="100"/>
+    <limit effort="100" lower="0" upper="${pi/2}" velocity="100"/>
     <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
   <joint name="fl_knee_joint" type="revolute">
@@ -216,7 +216,7 @@
     <parent link="fl_upper_link"/>
     <child link="fl_lower_link"/>
     <axis xyz="0 0 1"/>
-    <limit effort="1000" lower="0" upper="${pi}" velocity="100"/>
+    <limit effort="100" lower="0" upper="${pi}" velocity="100"/>
     <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
 
@@ -288,7 +288,7 @@
     <parent link="body_link"/>
     <child link="fr_hip_link"/>
     <axis xyz="1 0 0"/>
-    <limit effort="1000" lower="-0.5" upper="0.3" velocity="100"/>
+    <limit effort="100" lower="-0.5" upper="0.3" velocity="100"/>
     <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
   <joint name="fr_hip_joint" type="revolute">
@@ -296,7 +296,7 @@
     <parent link="fr_hip_link"/>
     <child link="fr_upper_link"/>
     <axis xyz="0 0 -1"/>
-    <limit effort="1000" lower="0" upper="${pi/2}" velocity="100"/>
+    <limit effort="100" lower="0" upper="${pi/2}" velocity="100"/>
     <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
   <joint name="fr_knee_joint" type="revolute">
@@ -304,7 +304,7 @@
     <parent link="fr_upper_link"/>
     <child link="fr_lower_link"/>
     <axis xyz="0 0 1"/>
-    <limit effort="1000" lower="0" upper="${pi}" velocity="100"/>
+    <limit effort="100" lower="0" upper="${pi}" velocity="100"/>
     <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
 
@@ -376,7 +376,7 @@
     <parent link="body_link"/>
     <child link="br_hip_link"/>
     <axis xyz="1 0 0"/>
-    <limit effort="1000" lower="-0.5" upper="0.3" velocity="100"/>
+    <limit effort="100" lower="-0.5" upper="0.3" velocity="100"/>
     <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
   <joint name="br_hip_joint" type="revolute">
@@ -384,7 +384,7 @@
     <parent link="br_hip_link"/>
     <child link="br_upper_link"/>
     <axis xyz="0 0 -1"/>
-    <limit effort="1000" lower="0" upper="${pi/2}" velocity="100"/>
+    <limit effort="100" lower="0" upper="${pi/2}" velocity="100"/>
     <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
   <joint name="br_knee_joint" type="revolute">
@@ -392,7 +392,7 @@
     <parent link="br_upper_link"/>
     <child link="br_lower_link"/>
     <axis xyz="0 0 1"/>
-    <limit effort="1000" lower="0" upper="${pi}" velocity="100"/>
+    <limit effort="100" lower="0" upper="${pi}" velocity="100"/>
     <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
 
@@ -464,7 +464,7 @@
     <parent link="body_link"/>
     <child link="bl_hip_link"/>
     <axis xyz="1 0 0"/>
-    <limit effort="1000" lower="-0.5" upper="0.3" velocity="100"/>
+    <limit effort="100" lower="-0.5" upper="0.3" velocity="100"/>
     <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
   <joint name="bl_hip_joint" type="revolute">
@@ -472,7 +472,7 @@
     <parent link="bl_hip_link"/>
     <child link="bl_upper_link"/>
     <axis xyz="0 0 -1"/>
-    <limit effort="1000" lower="0" upper="${pi/2}" velocity="100"/>
+    <limit effort="100" lower="0" upper="${pi/2}" velocity="100"/>
     <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
   <joint name="bl_knee_joint" type="revolute">
@@ -480,7 +480,7 @@
     <parent link="bl_upper_link"/>
     <child link="bl_lower_link"/>
     <axis xyz="0 0 1"/>
-    <limit effort="1000" lower="0" upper="${pi}" velocity="100"/>
+    <limit effort="100" lower="0" upper="${pi}" velocity="100"/>
     <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
 

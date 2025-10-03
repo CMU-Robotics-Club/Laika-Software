@@ -25,8 +25,9 @@ setup(
     entry_points={
         'console_scripts': [
             'input = laika_control.input:main',
-            'joint_controller_test = laika_control.joint_controller:main',
-            'set_joints_random = laika_control.set_joints_random:main'
+            'set_joints_sin = laika_control.set_joints_sin:main',
+            'set_joints_random = laika_control.set_joints_random:main',
+            'set_joints_extended = laika_control.set_joints_extended:main'
         ],
     },
 )
