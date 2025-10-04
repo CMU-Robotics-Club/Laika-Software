@@ -209,21 +209,31 @@
   </link>
 
   <!-- FL JOINTS -->
-  <joint name="fl_lat_joint" type="revolute">
+  <!-- <joint name="fl_lat_joint" type="revolute"> -->
+  <!--   <origin rpy="1.5708 0 1.5708" xyz="0.043 -0.3075 0.116"/> -->
+  <!--   <parent link="body_link"/> -->
+  <!--   <child link="fl_hip_link"/> -->
+  <!--   <axis xyz="1 0 0"/> -->
+  <!--   <limit effort="1000" lower="-0.5" upper="0.3" velocity="100"/> -->
+  <!--   <dynamics damping="${damping}" friction="${friction}"/> -->
+  <!-- </joint> -->
+  <joint name="fl_lat_joint" type="fixed">
     <origin rpy="1.5708 0 1.5708" xyz="0.043 -0.3075 0.116"/>
     <parent link="body_link"/>
     <child link="fl_hip_link"/>
-    <axis xyz="1 0 0"/>
-    <limit effort="1000" lower="-0.5" upper="0.3" velocity="100"/>
-    <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
-  <joint name="fl_hip_joint" type="revolute">
+  <!-- <joint name="fl_hip_joint" type="revolute"> -->
+  <!--   <origin rpy="0 0 0" xyz="0 -0.046 0.09"/> -->
+  <!--   <parent link="fl_hip_link"/> -->
+  <!--   <child link="fl_upper_link"/> -->
+  <!--   <axis xyz="0 0 -1"/> -->
+  <!--   <limit effort="1000" lower="0" upper="${pi/2}" velocity="100"/> -->
+  <!--   <dynamics damping="${damping}" friction="${friction}"/> -->
+  <!-- </joint> -->
+  <joint name="fl_hip_joint" type="fixed">
     <origin rpy="0 0 0" xyz="0 -0.046 0.09"/>
     <parent link="fl_hip_link"/>
     <child link="fl_upper_link"/>
-    <axis xyz="0 0 -1"/>
-    <limit effort="1000" lower="0" upper="${pi/2}" velocity="100"/>
-    <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
   <joint name="fl_knee_joint" type="revolute">
     <origin rpy="0 0 0.04573" xyz="0.35 0 0.0055"/>
@@ -297,21 +307,31 @@
   </link>
 
   <!-- FR JOINTS -->
-  <joint name="fr_lat_joint" type="revolute">
+  <!-- <joint name="fr_lat_joint" type="revolute"> -->
+  <!--   <origin rpy="-1.5708 0 -1.5708" xyz="-0.043 -0.3075 0.116"/> -->
+  <!--   <parent link="body_link"/> -->
+  <!--   <child link="fr_hip_link"/> -->
+  <!--   <axis xyz="1 0 0"/> -->
+  <!--   <limit effort="1000" lower="-0.5" upper="0.3" velocity="100"/> -->
+  <!--   <dynamics damping="${damping}" friction="${friction}"/> -->
+  <!-- </joint> -->
+  <joint name="fr_lat_joint" type="fixed">
     <origin rpy="-1.5708 0 -1.5708" xyz="-0.043 -0.3075 0.116"/>
     <parent link="body_link"/>
     <child link="fr_hip_link"/>
-    <axis xyz="1 0 0"/>
-    <limit effort="1000" lower="-0.5" upper="0.3" velocity="100"/>
-    <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
-  <joint name="fr_hip_joint" type="revolute">
+  <!-- <joint name="fr_hip_joint" type="revolute"> -->
+  <!--   <origin rpy="0 0 3.1416" xyz="0 0.046 -0.126"/> -->
+  <!--   <parent link="fr_hip_link"/> -->
+  <!--   <child link="fr_upper_link"/> -->
+  <!--   <axis xyz="0 0 -1"/> -->
+  <!--   <limit effort="1000" lower="0" upper="${pi/2}" velocity="100"/> -->
+  <!--   <dynamics damping="${damping}" friction="${friction}"/> -->
+  <!-- </joint> -->
+  <joint name="fr_hip_joint" type="fixed">
     <origin rpy="0 0 3.1416" xyz="0 0.046 -0.126"/>
     <parent link="fr_hip_link"/>
     <child link="fr_upper_link"/>
-    <axis xyz="0 0 -1"/>
-    <limit effort="1000" lower="0" upper="${pi/2}" velocity="100"/>
-    <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
   <joint name="fr_knee_joint" type="revolute">
     <origin rpy="0 0 0.04573" xyz="0.35 0 0.0055"/>
@@ -385,21 +405,31 @@
   </link>
 
   <!-- BR JOINTS -->
-  <joint name="br_lat_joint" type="revolute">
+  <!-- <joint name="br_lat_joint" type="revolute"> -->
+  <!--   <origin rpy="-1.5708 0 -1.5708" xyz="-0.043 0.3075 0.116"/> -->
+  <!--   <parent link="body_link"/> -->
+  <!--   <child link="br_hip_link"/> -->
+  <!--   <axis xyz="1 0 0"/> -->
+  <!--   <limit effort="1000" lower="-0.5" upper="0.3" velocity="100"/> -->
+  <!--   <dynamics damping="${damping}" friction="${friction}"/> -->
+  <!-- </joint> -->
+<joint name="br_lat_joint" type="fixed">
     <origin rpy="-1.5708 0 -1.5708" xyz="-0.043 0.3075 0.116"/>
     <parent link="body_link"/>
     <child link="br_hip_link"/>
-    <axis xyz="1 0 0"/>
-    <limit effort="1000" lower="-0.5" upper="0.3" velocity="100"/>
-    <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
-  <joint name="br_hip_joint" type="revolute">
+  <!-- <joint name="br_hip_joint" type="revolute"> -->
+  <!--   <origin rpy="0 0 3.1416" xyz="0 0.046 -0.126"/> -->
+  <!--   <parent link="br_hip_link"/> -->
+  <!--   <child link="br_upper_link"/> -->
+  <!--   <axis xyz="0 0 -1"/> -->
+  <!--   <limit effort="1000" lower="0" upper="${pi/2}" velocity="100"/> -->
+  <!--   <dynamics damping="${damping}" friction="${friction}"/> -->
+  <!-- </joint> -->
+  <joint name="br_hip_joint" type="fixed">
     <origin rpy="0 0 3.1416" xyz="0 0.046 -0.126"/>
     <parent link="br_hip_link"/>
     <child link="br_upper_link"/>
-    <axis xyz="0 0 -1"/>
-    <limit effort="1000" lower="0" upper="${pi/2}" velocity="100"/>
-    <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
   <joint name="br_knee_joint" type="revolute">
     <origin rpy="0 0 0.04573" xyz="0.35 0 0.0055"/>
@@ -473,21 +503,31 @@
   </link>
 
   <!-- BL JOINTS -->
-  <joint name="bl_lat_joint" type="revolute">
+  <!-- <joint name="bl_lat_joint" type="revolute"> -->
+  <!--   <origin rpy="1.5708 0 1.5708" xyz="0.043 0.3075 0.116"/> -->
+  <!--   <parent link="body_link"/> -->
+  <!--   <child link="bl_hip_link"/> -->
+  <!--   <axis xyz="1 0 0"/> -->
+  <!--   <limit effort="1000" lower="-0.5" upper="0.3" velocity="100"/> -->
+  <!--   <dynamics damping="${damping}" friction="${friction}"/> -->
+  <!-- </joint> -->
+  <joint name="bl_lat_joint" type="fixed">
     <origin rpy="1.5708 0 1.5708" xyz="0.043 0.3075 0.116"/>
     <parent link="body_link"/>
     <child link="bl_hip_link"/>
-    <axis xyz="1 0 0"/>
-    <limit effort="1000" lower="-0.5" upper="0.3" velocity="100"/>
-    <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
-  <joint name="bl_hip_joint" type="revolute">
+  <!-- <joint name="bl_hip_joint" type="revolute"> -->
+  <!--   <origin rpy="-0.025321 0 0" xyz="0 -0.046 0.09"/> -->
+  <!--   <parent link="bl_hip_link"/> -->
+  <!--   <child link="bl_upper_link"/> -->
+  <!--   <axis xyz="0 0 -1"/> -->
+  <!--   <limit effort="1000" lower="0" upper="${pi/2}" velocity="100"/> -->
+  <!--   <dynamics damping="${damping}" friction="${friction}"/> -->
+  <!-- </joint> -->
+  <joint name="bl_hip_joint" type="fixed">
     <origin rpy="-0.025321 0 0" xyz="0 -0.046 0.09"/>
     <parent link="bl_hip_link"/>
     <child link="bl_upper_link"/>
-    <axis xyz="0 0 -1"/>
-    <limit effort="1000" lower="0" upper="${pi/2}" velocity="100"/>
-    <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
   <joint name="bl_knee_joint" type="revolute">
     <origin rpy="0.025295 -0.0011574 0.045716" xyz="0.35 -0.00013925 0.0054982"/>
@@ -502,61 +542,61 @@
     <hardware>
       <plugin>gz_ros2_control/GazeboSimSystem</plugin>
     </hardware>
-    <joint name="fl_lat_joint">
-      <command_interface name="effort" />
-      <state_interface name="position" />
-      <state_interface name="velocity" />
-    </joint>
-    <joint name="fl_hip_joint">
-      <command_interface name="effort" />
-      <state_interface name="position" />
-      <state_interface name="velocity" />
-    </joint>
+    <!-- <joint name="fl_lat_joint"> -->
+    <!--   <command_interface name="effort" /> -->
+    <!--   <state_interface name="position" /> -->
+    <!--   <state_interface name="velocity" /> -->
+    <!-- </joint> -->
+    <!-- <joint name="fl_hip_joint"> -->
+    <!--   <command_interface name="effort" /> -->
+    <!--   <state_interface name="position" /> -->
+    <!--   <state_interface name="velocity" /> -->
+    <!-- </joint> -->
     <joint name="fl_knee_joint">
       <command_interface name="effort" />
       <state_interface name="position" />
       <state_interface name="velocity" />
     </joint>
-    <joint name="fr_lat_joint">
-      <command_interface name="effort" />
-      <state_interface name="position" />
-      <state_interface name="velocity" />
-    </joint>
-    <joint name="fr_hip_joint">
-      <command_interface name="effort" />
-      <state_interface name="position" />
-      <state_interface name="velocity" />
-    </joint>
+    <!-- <joint name="fr_lat_joint"> -->
+    <!--   <command_interface name="effort" /> -->
+    <!--   <state_interface name="position" /> -->
+    <!--   <state_interface name="velocity" /> -->
+    <!-- </joint> -->
+    <!-- <joint name="fr_hip_joint"> -->
+    <!--   <command_interface name="effort" /> -->
+    <!--   <state_interface name="position" /> -->
+    <!--   <state_interface name="velocity" /> -->
+    <!-- </joint> -->
     <joint name="fr_knee_joint">
       <command_interface name="effort" />
       <state_interface name="position" />
       <state_interface name="velocity" />
     </joint>
-    <joint name="bl_lat_joint">
-      <command_interface name="effort" />
-      <state_interface name="position" />
-      <state_interface name="velocity" />
-    </joint>
-    <joint name="bl_hip_joint">
-      <command_interface name="effort" />
-      <state_interface name="position" />
-      <state_interface name="velocity" />
-    </joint>
+    <!-- <joint name="bl_lat_joint"> -->
+    <!--   <command_interface name="effort" /> -->
+    <!--   <state_interface name="position" /> -->
+    <!--   <state_interface name="velocity" /> -->
+    <!-- </joint> -->
+    <!-- <joint name="bl_hip_joint"> -->
+    <!--   <command_interface name="effort" /> -->
+    <!--   <state_interface name="position" /> -->
+    <!--   <state_interface name="velocity" /> -->
+    <!-- </joint> -->
     <joint name="bl_knee_joint">
       <command_interface name="effort" />
       <state_interface name="position" />
       <state_interface name="velocity" />
     </joint>
-    <joint name="br_lat_joint">
-      <command_interface name="effort" />
-      <state_interface name="position" />
-      <state_interface name="velocity" />
-    </joint>
-    <joint name="br_hip_joint">
-      <command_interface name="effort" />
-      <state_interface name="position" />
-      <state_interface name="velocity" />
-    </joint>
+    <!-- <joint name="br_lat_joint"> -->
+    <!--   <command_interface name="effort" /> -->
+    <!--   <state_interface name="position" /> -->
+    <!--   <state_interface name="velocity" /> -->
+    <!-- </joint> -->
+    <!-- <joint name="br_hip_joint"> -->
+    <!--   <command_interface name="effort" /> -->
+    <!--   <state_interface name="position" /> -->
+    <!--   <state_interface name="velocity" /> -->
+    <!-- </joint> -->
     <joint name="br_knee_joint">
       <command_interface name="effort" />
       <state_interface name="position" />
