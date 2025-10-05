@@ -25,7 +25,8 @@ class SetJointsSin(Node):
 
         step = (self.i * 2 * math.pi)/1000
         lat = 0.0
-        hip = 0.1 + (-math.cos(step) + 1) * (math.pi/4) * 0.8
+        # hip = 0.1 + (-math.cos(step) + 1) * (math.pi/4) * 0.8
+        hip = 0.0
         knee = 0.1 + (-math.cos(step) + 1) * (math.pi/2) * 0.8
         pid_msg.values = [lat, hip, knee,
                           lat, hip, knee,
