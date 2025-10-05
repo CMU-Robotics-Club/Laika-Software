@@ -55,9 +55,25 @@ To start the simulation with the robot flying (good for some testing):
 ```sh
 ros2 launch laika_sim simulation.launch.py fly:=true
 ```
-## Make the joints move
-After starting the simulation, open a seperate terminal and run:
+To start the simulation with the robot on a vertical slider (good for some testing):
 ```sh
-ros2 run laika_control joint_controller_test
+ros2 launch laika_sim simulation.launch.py slide:=true
+```
+## Make the joints move
+After starting the simulation, run these in a seperate terminal:
+
+Make the joints go up and down smothly (sin wave):
+```sh
+ros2 run laika_control set_joints_sin
+```
+
+Make the joints go to random positions:
+```sh
+ros2 run laika_control set_joints_random
+```
+
+Make the joints extended:
+```sh
+ros2 run laika_control set_joints_extended
 ```
 
