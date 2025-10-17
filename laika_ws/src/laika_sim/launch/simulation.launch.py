@@ -25,6 +25,10 @@ def generate_launch_description():
             content = arg.split(":=")[1]
             if content == "true":
                 log_level = 'debug'
+        if arg.startswith("fly:="):
+            content = arg.split(":=")[1]
+            if content == "true":
+                fly = "true"
         if arg.startswith("slide:="):
             content = arg.split(":=")[1]
             if content == "true":
@@ -33,7 +37,7 @@ def generate_launch_description():
     print("")
     print("log_level:           " + str(log_level))
     print("fly:                 " + str(fly))
-    print("slide:               " + str(fly))
+    print("slide:               " + str(slide))
     print("")
     # Launch Arguments
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
