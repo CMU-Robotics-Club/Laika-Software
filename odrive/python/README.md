@@ -15,10 +15,3 @@ source .venv/bin/activate
 ```sh
 pip install python-can odrive odrivetool
 ```
-
-Using apt:
-
-```sh
-sudo apt install python3-can
-```
-
