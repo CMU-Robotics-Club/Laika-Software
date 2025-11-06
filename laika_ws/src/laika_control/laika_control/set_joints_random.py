@@ -8,7 +8,7 @@ class SetJointsRandom(Node):
     def __init__(self):
         super().__init__('SetJointsRandom')
         self.publisher_ = self.create_publisher(MultiDOFCommand, '/pidf_controller/reference', 10)
-        self.timer_ = self.create_timer(3.0, self.publish_trajectory) # Publish every second
+        self.timer_ = self.create_timer(0.05, self.publish_trajectory) # Publish every second
         self.dof_names = ['fl_lat_joint', 'fl_hip_joint', 'fl_knee_joint',
                           'fr_lat_joint', 'fr_hip_joint', 'fr_knee_joint',
                           'br_lat_joint', 'br_hip_joint', 'br_knee_joint',
@@ -19,14 +19,26 @@ class SetJointsRandom(Node):
         pid_msg = MultiDOFCommand()
         pid_msg.dof_names = self.dof_names
         
-        lat = (random.random()*0.8)-0.5
-        hip = (random.random()*math.pi/2)
-        knee = (random.random()*math.pi)
+        latfl = -4.0#(random.random()*0.8)-0.5
+        hipfl = (random.random()*math.pi/2)
+        kneefl = (random.random()*math.pi)
 
-        pid_msg.values = [lat, hip, knee,
-                          lat, hip, knee,
-                          lat, hip, knee,
-                          lat, hip, knee
+        latfr = -4.0#(random.random()*0.8)-0.5
+        hipfr = (random.random()*math.pi/2)
+        kneefr = (random.random()*math.pi)
+
+        latbr = -4.0#(random.random()*0.8)-0.5
+        hipbr = (random.random()*math.pi/2)
+        kneebr = (random.random()*math.pi)
+
+        latbl = -4.0#(random.random()*0.8)-0.5
+        hipbl = (random.random()*math.pi/2)
+        kneebl = (random.random()*math.pi)
+
+        pid_msg.values = [latfl, hipfl, kneefl,
+                          latfl, hipfl, kneefl,
+                          latbr, hipbr, kneebr,
+                          latbr, hipbr, kneebr
                           ]
 
         self.publisher_.publish(pid_msg)

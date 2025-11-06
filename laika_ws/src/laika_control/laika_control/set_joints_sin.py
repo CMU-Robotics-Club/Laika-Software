@@ -23,15 +23,16 @@ class SetJointsSin(Node):
         pid_msg = MultiDOFCommand()
         pid_msg.dof_names = self.dof_names
 
-        step = (self.i * 2 * math.pi)/1000
-        lat = 0.0
+        step = (self.i * 2 * math.pi)/5
+        lat = -4.0#0.1 + (-math.cos(step) + 1) * (math.pi/2) * 0.8# 2.0
         # hip = 0.1 + (-math.cos(step) + 1) * (math.pi/4) * 0.8
-        hip = 0.0
+        hip = 0
         knee = 0.1 + (-math.cos(step) + 1) * (math.pi/2) * 0.8
+        knee2 = 0.1 + (-math.sin(step) + 1) * (math.pi/2) * 0.8
         pid_msg.values = [lat, hip, knee,
+                          lat, hip, knee2,
                           lat, hip, knee,
-                          lat, hip, knee,
-                          lat, hip, knee
+                          lat, hip, knee2
                           ]
 
         self.publisher_.publish(pid_msg)
