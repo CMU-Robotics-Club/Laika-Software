@@ -13,6 +13,7 @@ import sys
 
 def generate_launch_description():
     fly = "false"
+    slide = "false"
     log_level = 'error'
 
     for arg in sys.argv:
@@ -28,10 +29,15 @@ def generate_launch_description():
             content = arg.split(":=")[1]
             if content == "true":
                 fly = "true"
+        if arg.startswith("slide:="):
+            content = arg.split(":=")[1]
+            if content == "true":
+                slide = "true"
     
     print("")
     print("log_level:           " + str(log_level))
     print("fly:                 " + str(fly))
+    print("slide:               " + str(slide))
     print("")
     # Launch Arguments
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
@@ -41,6 +47,8 @@ def generate_launch_description():
     # Get URDF via xacro
     if fly=="true":
         urdf_file_name = "flying_laika.xacro.urdf"
+    elif slide == "true":
+        urdf_file_name = "sliding_laika.xacro.urdf"
     else:
         urdf_file_name = "laika.xacro.urdf"
 

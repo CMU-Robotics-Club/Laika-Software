@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="laika">
+  <!-- MATERIALS -->
   <material name="body">
     <color rgba="0.6 0.3 0.3 1"/>
   </material>
@@ -12,86 +13,94 @@
   <material name="lower">
     <color rgba="0.3 0.4 0.6 1"/>
   </material>
+  <material name="feet">
+    <color rgba="0.8 0.2 0.1 1"/>
+  </material>
 
-  <!-- <link name="fl_sphere"> -->
-  <!--   <visual> -->
-  <!--     <geometry> -->
-  <!--       <sphere radius="0.02" /> -->
-  <!--     </geometry> -->
-  <!--     <material name="red"/> -->
-  <!--   </visual> -->
-  <!--   <collision> -->
-  <!--     <geometry> -->
-  <!--       <sphere radius="0.02" /> -->
-  <!--     </geometry> -->
-  <!--   </collision> -->
-  <!-- </link> -->
-  <!-- <link name="fr_sphere"> -->
-  <!--   <visual> -->
-  <!--     <geometry> -->
-  <!--       <sphere radius="0.02" /> -->
-  <!--     </geometry> -->
-  <!--     <material name="red"/> -->
-  <!--   </visual> -->
-  <!--   <collision> -->
-  <!--     <geometry> -->
-  <!--       <sphere radius="0.02" /> -->
-  <!--     </geometry> -->
-  <!--   </collision> -->
-  <!-- </link> -->
-  <!-- <link name="bl_sphere"> -->
-  <!--   <visual> -->
-  <!--     <geometry> -->
-  <!--       <sphere radius="0.02" /> -->
-  <!--     </geometry> -->
-  <!--     <material name="red"/> -->
-  <!--   </visual> -->
-  <!--   <collision> -->
-  <!--     <geometry> -->
-  <!--       <sphere radius="0.02" /> -->
-  <!--     </geometry> -->
-  <!--   </collision> -->
-  <!-- </link> -->
-  <!-- <link name="br_sphere"> -->
-  <!--   <visual> -->
-  <!--     <geometry> -->
-  <!--       <sphere radius="0.02" /> -->
-  <!--     </geometry> -->
-  <!--     <material name="red"/> -->
-  <!--   </visual> -->
-  <!--   <collision> -->
-  <!--     <geometry> -->
-  <!--       <sphere radius="0.02" /> -->
-  <!--     </geometry> -->
-  <!--   </collision> -->
-  <!-- </link> -->
-  <!-- <joint name="fl_foot" type="fixed"> -->
-  <!--   <origin rpy="0 0 0" xyz="-0.4 -0.05 0.015"/> -->
-  <!--   <parent link="fl_lower_link"/> -->
-  <!--   <child link="fl_sphere"/> -->
-  <!-- </joint> -->
-  <!-- <joint name="fr_foot" type="fixed"> -->
-  <!--   <origin rpy="0 0 0" xyz="-0.4 -0.05 0.015"/> -->
-  <!--   <parent link="fr_lower_link"/> -->
-  <!--   <child link="fr_sphere"/> -->
-  <!-- </joint> -->
-  <!-- <joint name="bl_foot" type="fixed"> -->
-  <!--   <origin rpy="0 0 0" xyz="-0.4 -0.05 0.015"/> -->
-  <!--   <parent link="bl_lower_link"/> -->
-  <!--   <child link="bl_sphere"/> -->
-  <!-- </joint> -->
-  <!-- <joint name="br_foot" type="fixed"> -->
-  <!--   <origin rpy="0 0 0" xyz="-0.4 -0.05 0.015"/> -->
-  <!--   <parent link="br_lower_link"/> -->
-  <!--   <child link="br_sphere"/> -->
-  <!-- </joint> -->
+  <!-- CONSTANTS -->
+  <xacro:property name="damping" value="0.2" />
+  <xacro:property name="friction" value="0.01" />
 
   <!-- Make Laika fly in the air -->
   <link name="world"/>
   <joint name="world_to_base" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 1"/>
+    <origin rpy="0 0 ${pi}" xyz="0 0 1"/>
     <parent link="world"/>
     <child link="base"/>
+  </joint>
+
+  <!-- SPHERES AT THE END -->
+  <link name="fl_sphere">
+    <visual>
+      <geometry>
+        <sphere radius="0.02" />
+      </geometry>
+      <material name="feet"/>
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="0.02" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="fr_sphere">
+    <visual>
+      <geometry>
+        <sphere radius="0.02" />
+      </geometry>
+      <material name="feet"/>
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="0.02" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="bl_sphere">
+    <visual>
+      <geometry>
+        <sphere radius="0.02" />
+      </geometry>
+      <material name="feet"/>
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="0.02" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="br_sphere">
+    <visual>
+      <geometry>
+        <sphere radius="0.02" />
+      </geometry>
+      <material name="feet"/>
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="0.02" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="fl_foot" type="fixed">
+    <origin rpy="0 0 0" xyz="-0.4 -0.05 0.015"/>
+    <parent link="fl_lower_link"/>
+    <child link="fl_sphere"/>
+  </joint>
+  <joint name="fr_foot" type="fixed">
+    <origin rpy="0 0 0" xyz="-0.4 -0.05 0.015"/>
+    <parent link="fr_lower_link"/>
+    <child link="fr_sphere"/>
+  </joint>
+  <joint name="bl_foot" type="fixed">
+    <origin rpy="0 0 0" xyz="-0.4 -0.05 0.015"/>
+    <parent link="bl_lower_link"/>
+    <child link="bl_sphere"/>
+  </joint>
+  <joint name="br_foot" type="fixed">
+    <origin rpy="0 0 0" xyz="-0.4 -0.05 0.015"/>
+    <parent link="br_lower_link"/>
+    <child link="br_sphere"/>
   </joint>
 
   <!-- Added to avoid warning about base link having inertia -->
@@ -123,6 +132,7 @@
     </inertial>
   </link>
 
+  <!-- FL LINKS -->
   <link name="fl_hip_link">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -143,13 +153,6 @@
       <inertia ixx="0.0058498" ixy="2.112E-10" ixz="-4.0096E-11" iyy="0.0030459" iyz="-0.00030042" izz="0.0066374"/>
     </inertial>
   </link>
-  <joint name="fl_lat_joint" type="revolute">
-    <origin rpy="1.5708 0 1.5708" xyz="0.043 -0.3075 0.116"/>
-    <parent link="body_link"/>
-    <child link="fl_hip_link"/>
-    <axis xyz="1 0 0"/>
-    <limit effort="1000" lower="-3.14" upper="3.14" velocity="20"/>
-  </joint>
   <link name="fl_upper_link">
     <inertial>
       <origin rpy="0 0 0" xyz="0.13279 0 0.018"/>
@@ -170,13 +173,6 @@
       </geometry>
     </collision>
   </link>
-  <joint name="fl_hip_joint" type="revolute">
-    <origin rpy="0 0 0" xyz="0 -0.046 0.09"/>
-    <parent link="fl_hip_link"/>
-    <child link="fl_upper_link"/>
-    <axis xyz="0 0 1"/>
-    <limit effort="1000" lower="-3.14" upper="3.14" velocity="20"/>
-  </joint>
   <link name="fl_lower_link">
     <inertial>
       <origin rpy="0 0 0" xyz="-0.156194569361722 -0.0439524151267173 0.0125"/>
@@ -197,13 +193,34 @@
       </geometry>
     </collision>
   </link>
+
+  <!-- FL JOINTS -->
+  <joint name="fl_lat_joint" type="revolute">
+    <origin rpy="1.5708 0 1.5708" xyz="0.043 -0.3075 0.116"/>
+    <parent link="body_link"/>
+    <child link="fl_hip_link"/>
+    <axis xyz="1 0 0"/>
+    <limit effort="100" lower="-0.5" upper="0.3" velocity="100"/>
+    <dynamics damping="${damping}" friction="${friction}"/>
+  </joint>
+  <joint name="fl_hip_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0 -0.046 0.09"/>
+    <parent link="fl_hip_link"/>
+    <child link="fl_upper_link"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="100" lower="0" upper="${pi/2}" velocity="100"/>
+    <dynamics damping="${damping}" friction="${friction}"/>
+  </joint>
   <joint name="fl_knee_joint" type="revolute">
     <origin rpy="0 0 0.04573" xyz="0.35 0 0.0055"/>
     <parent link="fl_upper_link"/>
     <child link="fl_lower_link"/>
     <axis xyz="0 0 1"/>
-    <limit effort="1000" lower="-3.14" upper="3.14" velocity="20"/>
+    <limit effort="100" lower="0" upper="${pi}" velocity="100"/>
+    <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
+
+  <!-- FR LINKS -->
   <link name="fr_hip_link">
     <inertial>
       <origin rpy="0 0 0" xyz="-1.93920088320532E-08 0.00319763205128835 -0.0477002276240959"/>
@@ -224,13 +241,6 @@
       </geometry>
     </collision>
   </link>
-  <joint name="fr_lat_joint" type="revolute">
-    <origin rpy="-1.5708 0 -1.5708" xyz="-0.043 -0.3075 0.116"/>
-    <parent link="body_link"/>
-    <child link="fr_hip_link"/>
-    <axis xyz="1 0 0"/>
-    <limit effort="1000" lower="-3.14" upper="3.14" velocity="20"/>
-  </joint>
   <link name="fr_upper_link">
     <inertial>
       <origin rpy="0 0 0" xyz="0.13279490605807 0 0.018"/>
@@ -251,13 +261,6 @@
       </geometry>
     </collision>
   </link>
-  <joint name="fr_hip_joint" type="revolute">
-    <origin rpy="0 0 3.1416" xyz="0 0.046 -0.126"/>
-    <parent link="fr_hip_link"/>
-    <child link="fr_upper_link"/>
-    <axis xyz="0 0 1"/>
-    <limit effort="1000" lower="-3.14" upper="3.14" velocity="20"/>
-  </joint>
   <link name="fr_lower_link">
     <inertial>
       <origin rpy="0 0 0" xyz="-0.156194569361723 -0.0439524151267173 0.0125"/>
@@ -278,13 +281,34 @@
       </geometry>
     </collision>
   </link>
+
+  <!-- FR JOINTS -->
+  <joint name="fr_lat_joint" type="revolute">
+    <origin rpy="-1.5708 0 -1.5708" xyz="-0.043 -0.3075 0.116"/>
+    <parent link="body_link"/>
+    <child link="fr_hip_link"/>
+    <axis xyz="1 0 0"/>
+    <limit effort="100" lower="-0.5" upper="0.3" velocity="100"/>
+    <dynamics damping="${damping}" friction="${friction}"/>
+  </joint>
+  <joint name="fr_hip_joint" type="revolute">
+    <origin rpy="0 0 3.1416" xyz="0 0.046 -0.126"/>
+    <parent link="fr_hip_link"/>
+    <child link="fr_upper_link"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="100" lower="0" upper="${pi/2}" velocity="100"/>
+    <dynamics damping="${damping}" friction="${friction}"/>
+  </joint>
   <joint name="fr_knee_joint" type="revolute">
     <origin rpy="0 0 0.04573" xyz="0.35 0 0.0055"/>
     <parent link="fr_upper_link"/>
     <child link="fr_lower_link"/>
     <axis xyz="0 0 1"/>
-    <limit effort="1000" lower="-3.14" upper="3.14" velocity="20"/>
+    <limit effort="100" lower="0" upper="${pi}" velocity="100"/>
+    <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
+
+  <!-- BR LINKS -->
   <link name="br_hip_link">
     <inertial>
       <origin rpy="0 0 0" xyz="-1.93920089430755E-08 0.00319763205128837 -0.0477002276240959"/>
@@ -305,13 +329,6 @@
       </geometry>
     </collision>
   </link>
-  <joint name="br_lat_joint" type="revolute">
-    <origin rpy="-1.5708 0 -1.5708" xyz="-0.043 0.3075 0.116"/>
-    <parent link="body_link"/>
-    <child link="br_hip_link"/>
-    <axis xyz="1 0 0"/>
-    <limit effort="1000" lower="-3.14" upper="3.14" velocity="20"/>
-  </joint>
   <link name="br_upper_link">
     <inertial>
       <origin rpy="0 0 0" xyz="0.13279490605807 0 0.018"/>
@@ -332,13 +349,6 @@
       </geometry>
     </collision>
   </link>
-  <joint name="br_hip_joint" type="revolute">
-    <origin rpy="0 0 3.1416" xyz="0 0.046 -0.126"/>
-    <parent link="br_hip_link"/>
-    <child link="br_upper_link"/>
-    <axis xyz="0 0 1"/>
-    <limit effort="1000" lower="-3.14" upper="3.14" velocity="20"/>
-  </joint>
   <link name="br_lower_link">
     <inertial>
       <origin rpy="0 0 0" xyz="-0.156194569361722 -0.0439524151267176 0.0125"/>
@@ -359,13 +369,34 @@
       </geometry>
     </collision>
   </link>
+
+  <!-- BR JOINTS -->
+  <joint name="br_lat_joint" type="revolute">
+    <origin rpy="-1.5708 0 -1.5708" xyz="-0.043 0.3075 0.116"/>
+    <parent link="body_link"/>
+    <child link="br_hip_link"/>
+    <axis xyz="1 0 0"/>
+    <limit effort="100" lower="-0.5" upper="0.3" velocity="100"/>
+    <dynamics damping="${damping}" friction="${friction}"/>
+  </joint>
+  <joint name="br_hip_joint" type="revolute">
+    <origin rpy="0 0 3.1416" xyz="0 0.046 -0.126"/>
+    <parent link="br_hip_link"/>
+    <child link="br_upper_link"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="100" lower="0" upper="${pi/2}" velocity="100"/>
+    <dynamics damping="${damping}" friction="${friction}"/>
+  </joint>
   <joint name="br_knee_joint" type="revolute">
     <origin rpy="0 0 0.04573" xyz="0.35 0 0.0055"/>
     <parent link="br_upper_link"/>
     <child link="br_lower_link"/>
     <axis xyz="0 0 1"/>
-    <limit effort="1000" lower="-3.14" upper="3.14" velocity="20"/>
+    <limit effort="100" lower="0" upper="${pi}" velocity="100"/>
+    <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
+
+  <!-- BL LINKS -->
   <link name="bl_hip_link">
     <inertial>
       <origin rpy="0 0 0" xyz="-1.93920089430755E-08 0.00319763205128837 -0.0477002276240959"/>
@@ -386,13 +417,6 @@
       </geometry>
     </collision>
   </link>
-  <joint name="bl_lat_joint" type="revolute">
-    <origin rpy="1.5708 0 1.5708" xyz="0.043 0.3075 0.116"/>
-    <parent link="body_link"/>
-    <child link="bl_hip_link"/>
-    <axis xyz="1 0 0"/>
-    <limit effort="1000" lower="-3.14" upper="3.14" velocity="20"/>
-  </joint>
   <link name="bl_upper_link">
     <inertial>
       <origin rpy="0 0 0" xyz="0.132794906058073 -0.000455732183043289 0.0179942298578352"/>
@@ -413,13 +437,6 @@
       </geometry>
     </collision>
   </link>
-  <joint name="bl_hip_joint" type="revolute">
-    <origin rpy="-0.025321 0 0" xyz="0 -0.046 0.09"/>
-    <parent link="bl_hip_link"/>
-    <child link="bl_upper_link"/>
-    <axis xyz="0 -0.025319 0.99968"/>
-    <limit effort="1000" lower="-3.14" upper="3.14" velocity="20"/>
-  </joint>
   <link name="bl_lower_link">
     <inertial>
       <origin rpy="0 0 0" xyz="-0.156194569361722 -0.0439524151267176 0.0125"/>
@@ -440,12 +457,31 @@
       </geometry>
     </collision>
   </link>
+
+  <!-- BL JOINTS -->
+  <joint name="bl_lat_joint" type="revolute">
+    <origin rpy="1.5708 0 1.5708" xyz="0.043 0.3075 0.116"/>
+    <parent link="body_link"/>
+    <child link="bl_hip_link"/>
+    <axis xyz="1 0 0"/>
+    <limit effort="100" lower="-0.5" upper="0.3" velocity="100"/>
+    <dynamics damping="${damping}" friction="${friction}"/>
+  </joint>
+  <joint name="bl_hip_joint" type="revolute">
+    <origin rpy="-0.025321 0 0" xyz="0 -0.046 0.09"/>
+    <parent link="bl_hip_link"/>
+    <child link="bl_upper_link"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="100" lower="0" upper="${pi/2}" velocity="100"/>
+    <dynamics damping="${damping}" friction="${friction}"/>
+  </joint>
   <joint name="bl_knee_joint" type="revolute">
     <origin rpy="0.025295 -0.0011574 0.045716" xyz="0.35 -0.00013925 0.0054982"/>
     <parent link="bl_upper_link"/>
     <child link="bl_lower_link"/>
     <axis xyz="0 0 1"/>
-    <limit effort="1000" lower="-3.14" upper="3.14" velocity="20"/>
+    <limit effort="100" lower="0" upper="${pi}" velocity="100"/>
+    <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
 
   <ros2_control name="GazeboSystem" type="system">
@@ -453,52 +489,64 @@
       <plugin>gz_ros2_control/GazeboSimSystem</plugin>
     </hardware>
     <joint name="fl_lat_joint">
-      <command_interface name="position" />
+      <command_interface name="effort" />
       <state_interface name="position" />
+      <state_interface name="velocity" />
     </joint>
     <joint name="fl_hip_joint">
-      <command_interface name="position" />
+      <command_interface name="effort" />
       <state_interface name="position" />
+      <state_interface name="velocity" />
     </joint>
     <joint name="fl_knee_joint">
-      <command_interface name="position" />
+      <command_interface name="effort" />
       <state_interface name="position" />
+      <state_interface name="velocity" />
     </joint>
     <joint name="fr_lat_joint">
-      <command_interface name="position" />
+      <command_interface name="effort" />
       <state_interface name="position" />
+      <state_interface name="velocity" />
     </joint>
     <joint name="fr_hip_joint">
-      <command_interface name="position" />
+      <command_interface name="effort" />
       <state_interface name="position" />
+      <state_interface name="velocity" />
     </joint>
     <joint name="fr_knee_joint">
-      <command_interface name="position" />
+      <command_interface name="effort" />
       <state_interface name="position" />
-    </joint>
-    <joint name="br_lat_joint">
-      <command_interface name="position" />
-      <state_interface name="position" />
-    </joint>
-    <joint name="br_hip_joint">
-      <command_interface name="position" />
-      <state_interface name="position" />
-    </joint>
-    <joint name="br_knee_joint">
-      <command_interface name="position" />
-      <state_interface name="position" />
+      <state_interface name="velocity" />
     </joint>
     <joint name="bl_lat_joint">
-      <command_interface name="position" />
+      <command_interface name="effort" />
       <state_interface name="position" />
+      <state_interface name="velocity" />
     </joint>
     <joint name="bl_hip_joint">
-      <command_interface name="position" />
+      <command_interface name="effort" />
       <state_interface name="position" />
+      <state_interface name="velocity" />
     </joint>
     <joint name="bl_knee_joint">
-      <command_interface name="position" />
+      <command_interface name="effort" />
       <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="br_lat_joint">
+      <command_interface name="effort" />
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="br_hip_joint">
+      <command_interface name="effort" />
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="br_knee_joint">
+      <command_interface name="effort" />
+      <state_interface name="position" />
+      <state_interface name="velocity" />
     </joint>
   </ros2_control>
 
