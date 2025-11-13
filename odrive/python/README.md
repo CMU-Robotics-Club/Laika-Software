@@ -15,3 +15,9 @@ source .venv/bin/activate
 ```sh
 pip install python-can odrive odrivetool
 ```
+
+## Start up odrive
+Connect the can adapter and run the following in linux:
+```sh
+sudo ip link set can0 up type can bitrate 250000
+```
