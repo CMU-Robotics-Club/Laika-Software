@@ -5,7 +5,7 @@ import atexit
 import struct
 import time
 
-node_id = 1 # ID of Odrive
+node_id = 2 # ID of Odrive
 
 ###### Check if windows or linux
 linux = True
@@ -66,7 +66,7 @@ print(f"{fw_major}.{fw_minor}.{fw_revision}")
 print(f"{hw_product_line}.{hw_version}.{hw_variant}")
 
 ###### Write Paramater
-path = 'axis0.controller.config.vel_integrator_limit'
+path = 'axis0.controller.config.vel_limit'
 value_to_write = float("inf")
 
 # Convert path to endpoint ID
@@ -86,7 +86,7 @@ bus.send(can.Message(
 time.sleep(0.1)
 
 ###### Read Paramater
-path = 'axis0.controller.config.vel_integrator_limit'
+path = 'axis0.controller.config.vel_limit'
 
 # Convert path to endpoint ID
 endpoint_id = endpoints[path]['id']
