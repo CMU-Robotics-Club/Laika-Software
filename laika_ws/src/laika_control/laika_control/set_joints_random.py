@@ -9,11 +9,12 @@ class SetJointsRandom(Node):
         super().__init__('SetJointsRandom')
         self.publisher_ = self.create_publisher(MultiDOFCommand, '/pidf_controller/reference', 10)
         self.timer_ = self.create_timer(3.0, self.publish_trajectory) # Publish every second
-        self.dof_names = ['fl_lat_joint', 'fl_hip_joint', 'fl_knee_joint',
-                          'fr_lat_joint', 'fr_hip_joint', 'fr_knee_joint',
-                          'br_lat_joint', 'br_hip_joint', 'br_knee_joint',
-                          'bl_lat_joint', 'bl_hip_joint', 'bl_knee_joint'
-                          ]
+        # self.dof_names = ['fl_lat_joint', 'fl_hip_joint', 'fl_knee_joint',
+        #                   'fr_lat_joint', 'fr_hip_joint', 'fr_knee_joint',
+        #                   'br_lat_joint', 'br_hip_joint', 'br_knee_joint',
+        #                   'bl_lat_joint', 'bl_hip_joint', 'bl_knee_joint'
+        #                   ]
+        self.dof_names = ['fl_hip_joint', 'fl_knee_joint']
 
     def publish_trajectory(self):
         pid_msg = MultiDOFCommand()
@@ -23,11 +24,7 @@ class SetJointsRandom(Node):
         hip = (random.random()*math.pi/2)
         knee = (random.random()*math.pi)
 
-        pid_msg.values = [lat, hip, knee,
-                          lat, hip, knee,
-                          lat, hip, knee,
-                          lat, hip, knee
-                          ]
+        pid_msg.values = [hip, knee]
 
         self.publisher_.publish(pid_msg)
 

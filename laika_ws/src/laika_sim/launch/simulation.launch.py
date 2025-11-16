@@ -13,14 +13,20 @@ import sys
 
 def generate_launch_description():
     fly = "false"
+    test_stand = "false"
     slide = "false"
     log_level = 'error'
+    controller_file = 'laika_controller.yaml'
 
     for arg in sys.argv:
         if arg.startswith("info:="):
             content = arg.split(":=")[1]
             if content == "true":
                 log_level = 'info'
+        if arg.startswith("test_stand:="):
+            content = arg.split(":=")[1]
+            if content == "true":
+                test_stand = "true"
         if arg.startswith("debug:="):
             content = arg.split(":=")[1]
             if content == "true":
@@ -43,6 +49,9 @@ def generate_launch_description():
     # Get URDF via xacro
     if fly=="true":
         urdf_file_name = "flying_laika.xacro.urdf"
+    elif test_stand == "true":
+        urdf_file_name = "test_stand_laika.xacro.urdf"
+        controller_file = 'test_stand_controller.yaml'
     elif slide == "true":
         urdf_file_name = "sliding_laika.xacro.urdf"
     else:
@@ -73,7 +82,7 @@ def generate_launch_description():
             [
                 FindPackageShare('laika_sim'),
                 'config',
-                'laika_controller.yaml',
+                controller_file,
                 ]
             )
 

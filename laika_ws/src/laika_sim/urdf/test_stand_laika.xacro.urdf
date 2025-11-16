@@ -1,0 +1,175 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="laika">
+  <!-- MATERIALS -->
+  <material name="body">
+    <color rgba="0.6 0.3 0.3 1"/>
+  </material>
+  <material name="hip">
+    <color rgba="0.8 0.4 0.7 1"/>
+  </material>
+  <material name="upper">
+    <color rgba="0.5 0.2 0.1 1"/>
+  </material>
+  <material name="lower">
+    <color rgba="0.3 0.4 0.6 1"/>
+  </material>
+  <material name="feet">
+    <color rgba="0.8 0.2 0.1 1"/>
+  </material>
+
+  <!-- SLIDER -->
+  <link name="world"/>
+  <link name="slider">
+    <visual>
+      <geometry>
+        <box size="0.01 0.01 2.0"/>
+      </geometry>
+      <origin xyz="0 0 0"/>
+      <material name="feet"/>
+    </visual>
+    <inertial>
+      <mass value="100"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+  <joint name="world_to_base" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 1"/>
+    <parent link="world"/>
+    <child link="slider"/>
+  </joint>
+  <joint name="slider_to_cart" type="prismatic">
+    <axis xyz="0 1 0"/>
+    <origin rpy = "1.5708 0 0" xyz="0.0 0.0 0.0"/>
+    <parent link="slider"/>
+    <child link="fl_hip_link"/>
+    <limit effort="1000.0" lower="-15" upper="15" velocity="30"/>
+    <dynamics damping="0.0" friction="0.0"/>
+  </joint>
+
+  <!-- CONSTANTS -->
+  <xacro:property name="damping" value="0.2" />
+  <xacro:property name="friction" value="0.01" />
+
+  <!-- SPHERES AT THE END -->
+  <link name="fl_sphere">
+    <visual>
+      <geometry>
+        <sphere radius="0.02" />
+      </geometry>
+      <material name="feet"/>
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="0.02" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="fl_foot" type="fixed">
+    <origin rpy="0 0 0" xyz="-0.4 -0.05 0.015"/>
+    <parent link="fl_lower_link"/>
+    <child link="fl_sphere"/>
+  </joint>
+
+  <!-- FL LINKS -->
+  <link name="fl_hip_link">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="$(find laika_sim)/meshes/fl_hip_link.STL"/>
+      </geometry>
+      <material name="hip"/>
+    </visual>
+    <collision>
+      <origin rpy="1.5708 0 1.5708" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="$(find laika_sim)/meshes/fl_hip_link.STL"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin rpy="1.5708 0 1.5708" xyz="-1.9392E-08 -0.0031976 0.0477"/>
+      <mass value="1.6958"/>
+      <inertia ixx="0.0058498" ixy="2.112E-10" ixz="-4.0096E-11" iyy="0.0030459" iyz="-0.00030042" izz="0.0066374"/>
+    </inertial>
+  </link>
+  <link name="fl_upper_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.13279 0 0.018"/>
+      <mass value="0.97882"/>
+      <inertia ixx="0.00063207" ixy="-1.319E-19" ixz="1.0666E-19" iyy="0.010367" iyz="2.9899E-20" izz="0.010777"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="$(find laika_sim)/meshes/fl_upper_link.STL"/>
+      </geometry>
+      <material name="upper"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="$(find laika_sim)/meshes/fl_upper_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="fl_lower_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.156194569361722 -0.0439524151267173 0.0125"/>
+      <mass value="0.262408631372316"/>
+      <inertia ixx="7.87592224730255E-05" ixy="-0.000247209665534184" ixz="1.36427507036098E-19" iyy="0.00476565441187624" iyz="1.51028668152663E-20" izz="0.00482182622024161"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="$(find laika_sim)/meshes/fl_lower_link.STL"/>
+      </geometry>
+      <material name="lower"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="$(find laika_sim)/meshes/fl_lower_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- FL JOINTS -->
+  <joint name="fl_hip_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0 -0.046 0.09"/>
+    <parent link="fl_hip_link"/>
+    <child link="fl_upper_link"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="1000" lower="0" upper="${pi/2}" velocity="100"/>
+    <dynamics damping="${damping}" friction="${friction}"/>
+  </joint>
+  <joint name="fl_knee_joint" type="revolute">
+    <origin rpy="0 0 0.04573" xyz="0.35 0 0.0055"/>
+    <parent link="fl_upper_link"/>
+    <child link="fl_lower_link"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="1000" lower="0" upper="${pi}" velocity="100"/>
+    <dynamics damping="${damping}" friction="${friction}"/>
+  </joint>
+
+
+  <ros2_control name="GazeboSystem" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+    <joint name="fl_hip_joint">
+      <command_interface name="effort" />
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="fl_knee_joint">
+      <command_interface name="effort" />
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+  </ros2_control>
+
+  <gazebo>
+    <plugin filename="libgz_ros2_control-system.so" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find laika_sim)/config/laika_controller.yaml</parameters>
+    </plugin>
+  </gazebo>
+</robot>
