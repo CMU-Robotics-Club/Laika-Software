@@ -14,13 +14,12 @@ class SetJointsRandom(Node):
         #                   'br_lat_joint', 'br_hip_joint', 'br_knee_joint',
         #                   'bl_lat_joint', 'bl_hip_joint', 'bl_knee_joint'
         #                   ]
-        self.dof_names = ['fl_hip_joint', 'fl_knee_joint']
+        self.dof_names = ['fr_hip_joint', 'fr_knee_joint']
 
     def publish_trajectory(self):
         pid_msg = MultiDOFCommand()
         pid_msg.dof_names = self.dof_names
         
-        lat = (random.random()*0.8)-0.5
         hip = (random.random()*math.pi/2)
         knee = (random.random()*math.pi)
 

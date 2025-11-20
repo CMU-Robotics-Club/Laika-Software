@@ -27,7 +27,8 @@ setup(
             'input = laika_control.input:main',
             'set_joints_sin = laika_control.set_joints_sin:main',
             'set_joints_random = laika_control.set_joints_random:main',
-            'set_joints_extended = laika_control.set_joints_extended:main'
+            'set_joints_extended = laika_control.set_joints_extended:main',
+            'set_joints_ik = laika_control.set_joints_ik:main'
         ],
     },
 )

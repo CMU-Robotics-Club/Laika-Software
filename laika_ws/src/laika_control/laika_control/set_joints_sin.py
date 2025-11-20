@@ -11,10 +11,7 @@ class SetJointsSin(Node):
         super().__init__('SetJointsSin')
         self.publisher_ = self.create_publisher(MultiDOFCommand, '/pidf_controller/reference', 10)
         self.timer_ = self.create_timer(0.02, self.publish_trajectory) # Publish every second
-        self.dof_names = ['fl_lat_joint', 'fl_hip_joint', 'fl_knee_joint',
-                          'fr_lat_joint', 'fr_hip_joint', 'fr_knee_joint',
-                          'br_lat_joint', 'br_hip_joint', 'br_knee_joint',
-                          'bl_lat_joint', 'bl_hip_joint', 'bl_knee_joint'
+        self.dof_names = ['fr_hip_joint', 'fr_knee_joint',
                           ]
         self.i = 0
 
@@ -27,13 +24,11 @@ class SetJointsSin(Node):
         lat = 0.0
         # hip = 0.1 + (-math.cos(step) + 1) * (math.pi/4) * 0.8
         hip = 0.0
-        knee = 0.1 + (-math.cos(step) + 1) * (math.pi/2) * 0.8
-        pid_msg.values = [lat, hip, knee,
-                          lat, hip, knee,
-                          lat, hip, knee,
-                          lat, hip, knee
-                          ]
-
+        knee = (-math.cos(step) + 1) * (math.pi)
+        hip = knee
+        
+        pid_msg.values = [hip, knee]
+        print (hip)
         self.publisher_.publish(pid_msg)
 
         if self.i == 1000:

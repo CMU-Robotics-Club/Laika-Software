@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="laika">
   <!-- MATERIALS -->
-
-
-
+  <material name="body">
+    <color rgba="0.6 0.3 0.3 1"/>
+  </material>
   <material name="hip">
     <color rgba="0.8 0.4 0.7 1"/>
   </material>
@@ -39,10 +39,9 @@
   </joint>
   <joint name="slider_to_cart" type="prismatic">
     <axis xyz="0 1 0"/>
-    <!-- -1.5708 0 0 -->
-    <origin rpy = "0 0 0" xyz="0.0 0.0 0.0"/>
+    <origin rpy = "1.5708 0 0" xyz="0.0 0.0 0.0"/>
     <parent link="slider"/>
-    <child link="fr_hip_link"/>
+    <child link="fl_hip_link"/>
     <limit effort="1000.0" lower="-15" upper="15" velocity="30"/>
     <dynamics damping="0.0" friction="0.0"/>
   </joint>
@@ -52,7 +51,7 @@
   <xacro:property name="friction" value="0.01" />
 
   <!-- SPHERES AT THE END -->
-  <link name="fr_sphere">
+  <link name="fl_sphere">
     <visual>
       <geometry>
         <sphere radius="0.02" />
@@ -65,41 +64,38 @@
       </geometry>
     </collision>
   </link>
-  <joint name="fr_foot" type="fixed">
+  <joint name="fl_foot" type="fixed">
     <origin rpy="0 0 0" xyz="-0.4 -0.05 0.015"/>
-    <parent link="fr_lower_link"/>
-    <child link="fr_sphere"/>
+    <parent link="fl_lower_link"/>
+    <child link="fl_sphere"/>
   </joint>
 
-
-
-
-  <!-- FR LINKS -->
-  <link name="fr_hip_link">
-    <inertial>
-      <origin rpy="0 0 0" xyz="-1.93920088320532E-08 0.00319763205128835 -0.0477002276240959"/>
-      <mass value="1.69584433341635"/>
-      <inertia ixx="0.00584981474763869" ixy="-2.11198615336347E-10" ixz="4.00957613383728E-11" iyy="0.00304591016123344" iyz="-0.000300415078157884" izz="0.0066373785606837"/>
-    </inertial>
+  <!-- FL LINKS -->
+  <link name="fl_hip_link">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="$(find laika_sim)/meshes/fr_hip_link.STL"/>
+        <mesh filename="$(find laika_sim)/meshes/fl_hip_link.STL"/>
       </geometry>
       <material name="hip"/>
     </visual>
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <origin rpy="1.5708 0 1.5708" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="$(find laika_sim)/meshes/fr_hip_link.STL"/>
+        <mesh filename="$(find laika_sim)/meshes/fl_hip_link.STL"/>
       </geometry>
     </collision>
-  </link>
-  <link name="fr_upper_link">
     <inertial>
-      <origin rpy="0 0 0" xyz="0.13279490605807 0 0.018"/>
-      <mass value="0.978822517757407"/>
-      <inertia ixx="0.000632067195788266" ixy="-1.90203589551556E-19" ixz="1.78966921687452E-20" iyy="0.0103666862101367" iyz="8.40130980121276E-21" izz="0.0107770527681284"/>
+      <origin rpy="1.5708 0 1.5708" xyz="-1.9392E-08 -0.0031976 0.0477"/>
+      <mass value="1.6958"/>
+      <inertia ixx="0.0058498" ixy="2.112E-10" ixz="-4.0096E-11" iyy="0.0030459" iyz="-0.00030042" izz="0.0066374"/>
+    </inertial>
+  </link>
+  <link name="fl_upper_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.13279 0 0.018"/>
+      <mass value="0.97882"/>
+      <inertia ixx="0.00063207" ixy="-1.319E-19" ixz="1.0666E-19" iyy="0.010367" iyz="2.9899E-20" izz="0.010777"/>
     </inertial>
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -115,55 +111,56 @@
       </geometry>
     </collision>
   </link>
-  <link name="fr_lower_link">
+  <link name="fl_lower_link">
     <inertial>
-      <origin rpy="0 0 0" xyz="-0.156194569361723 -0.0439524151267173 0.0125"/>
+      <origin rpy="0 0 0" xyz="-0.156194569361722 -0.0439524151267173 0.0125"/>
       <mass value="0.262408631372316"/>
-      <inertia ixx="7.87592224730253E-05" ixy="-0.000247209665534184" ixz="3.8450329246653E-20" iyy="0.00476565441187624" iyz="-8.47751430038427E-22" izz="0.00482182622024161"/>
+      <inertia ixx="7.87592224730255E-05" ixy="-0.000247209665534184" ixz="1.36427507036098E-19" iyy="0.00476565441187624" iyz="1.51028668152663E-20" izz="0.00482182622024161"/>
     </inertial>
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="$(find laika_sim)/meshes/fr_lower_link.STL"/>
+        <mesh filename="$(find laika_sim)/meshes/fl_lower_link.STL"/>
       </geometry>
       <material name="lower"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="$(find laika_sim)/meshes/fr_lower_link.STL"/>
+        <mesh filename="$(find laika_sim)/meshes/fl_lower_link.STL"/>
       </geometry>
     </collision>
   </link>
 
-  <!-- FR JOINTS -->
-  <joint name="fr_hip_joint" type="revolute">
-    <origin rpy="0 0 3.1416" xyz="0 0.046 -0.126"/>
-    <parent link="fr_hip_link"/>
-    <child link="fr_upper_link"/>
+  <!-- FL JOINTS -->
+  <joint name="fl_hip_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0 -0.046 0.09"/>
+    <parent link="fl_hip_link"/>
+    <child link="fl_upper_link"/>
     <axis xyz="0 0 -1"/>
-    <limit effort="1000" lower="0" upper="${2*pi}" velocity="100"/>
+    <limit effort="1000" lower="0" upper="${pi/2}" velocity="100"/>
     <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
-  <joint name="fr_knee_joint" type="revolute">
+  <joint name="fl_knee_joint" type="revolute">
     <origin rpy="0 0 0.04573" xyz="0.35 0 0.0055"/>
-    <parent link="fr_upper_link"/>
-    <child link="fr_lower_link"/>
+    <parent link="fl_upper_link"/>
+    <child link="fl_lower_link"/>
     <axis xyz="0 0 1"/>
-    <limit effort="1000" lower="0" upper="${2*pi}" velocity="100"/>
+    <limit effort="1000" lower="0" upper="${pi}" velocity="100"/>
     <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
+
 
   <ros2_control name="GazeboSystem" type="system">
     <hardware>
       <plugin>gz_ros2_control/GazeboSimSystem</plugin>
     </hardware>
-    <joint name="fr_hip_joint">
+    <joint name="fl_hip_joint">
       <command_interface name="effort" />
       <state_interface name="position" />
       <state_interface name="velocity" />
     </joint>
-    <joint name="fr_knee_joint">
+    <joint name="fl_knee_joint">
       <command_interface name="effort" />
       <state_interface name="position" />
       <state_interface name="velocity" />

@@ -9,8 +9,8 @@ pidf_controller:
   ros__parameters:
     type: pid_controller/PidController 
     dof_names:
-      - fr_hip_joint
-      - fr_knee_joint
+      - fl_hip_joint
+      - fl_knee_joint
 
     command_interface: effort
 
@@ -19,8 +19,8 @@ pidf_controller:
       - velocity
 
     gains:
-      fr_hip_joint:   {"p": 35.0, "i": 0.0, "d": 1.0, "i_clamp_min": -.inf, "i_clamp_max": .inf, "antiwindup_strategy":'none', "feedforward_gain": 0.0}
-      fr_knee_joint:  {"p": 35.0, "i": 0.0, "d": 1.0, "i_clamp_min": -.inf, "i_clamp_max": .inf, "antiwindup_strategy":'none', "feedforward_gain": 0.0}
+      fl_hip_joint:   {"p": 35.0, "i": 0.0, "d": 1.0, "i_clamp_min": -.inf, "i_clamp_max": .inf, "antiwindup_strategy":'none', "feedforward_gain": 0.0}
+      fl_knee_joint:  {"p": 35.0, "i": 0.0, "d": 1.0, "i_clamp_min": -.inf, "i_clamp_max": .inf, "antiwindup_strategy":'none', "feedforward_gain": 0.0}
 
 gz_ros_control:
   ros__parameters:
