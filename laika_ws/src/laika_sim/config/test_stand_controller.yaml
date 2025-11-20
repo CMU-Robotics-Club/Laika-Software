@@ -19,8 +19,8 @@ pidf_controller:
       - velocity
 
     gains:
-      fr_hip_joint:   {"p": 35.0, "i": 0.0, "d": 1.0, "i_clamp_min": -.inf, "i_clamp_max": .inf, "antiwindup_strategy":'none', "feedforward_gain": 0.0}
-      fr_knee_joint:  {"p": 35.0, "i": 0.0, "d": 1.0, "i_clamp_min": -.inf, "i_clamp_max": .inf, "antiwindup_strategy":'none', "feedforward_gain": 0.0}
+      fr_hip_joint:   {"p": 50.0, "i": 0.0, "d": 1.0, "i_clamp_min": -.inf, "i_clamp_max": .inf, "antiwindup_strategy":'none', "feedforward_gain": 0.0}
+      fr_knee_joint:  {"p": 50.0, "i": 0.0, "d": 1.0, "i_clamp_min": -.inf, "i_clamp_max": .inf, "antiwindup_strategy":'none', "feedforward_gain": 0.0}
 
 gz_ros_control:
   ros__parameters:

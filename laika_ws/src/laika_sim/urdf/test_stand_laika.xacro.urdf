@@ -40,7 +40,7 @@
   <joint name="slider_to_cart" type="prismatic">
     <axis xyz="0 1 0"/>
     <!-- -1.5708 0 0 -->
-    <origin rpy = "0 0 0" xyz="0.0 0.0 0.0"/>
+    <origin rpy = "-1.5708 0 0" xyz="0.0 0.0 0.0"/>
     <parent link="slider"/>
     <child link="fr_hip_link"/>
     <limit effort="1000.0" lower="-15" upper="15" velocity="30"/>
@@ -142,11 +142,11 @@
     <parent link="fr_hip_link"/>
     <child link="fr_upper_link"/>
     <axis xyz="0 0 -1"/>
-    <limit effort="1000" lower="0" upper="${2*pi}" velocity="100"/>
+    <limit effort="1000" lower="${-pi}" upper="${2*pi}" velocity="100"/>
     <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
   <joint name="fr_knee_joint" type="revolute">
-    <origin rpy="0 0 0.04573" xyz="0.35 0 0.0055"/>
+    <origin rpy="0 0 0" xyz="0.35 0 0.0055"/>
     <parent link="fr_upper_link"/>
     <child link="fr_lower_link"/>
     <axis xyz="0 0 1"/>
