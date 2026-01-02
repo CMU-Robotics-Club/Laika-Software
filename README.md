@@ -1,33 +1,8 @@
 # Laika-Software
 A repository for the software packages for the Laika quadruped robot.
 
-## Dependencies
-Follow these instructions to avoid dependency hell.
-
-### Install ROS2 Jazzy
-Install ROS2 jazzy following these instructions:
-(You need Ubuntu 24.04 for it)
-
-https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html
-
-Make sure to follow **all** the steps, including installing the development tools.
-
-### Setup rosdep
-To automatically install all necessary dependencies, this projects uses rosdep (https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Rosdep.html). 
-Install Rosdep using these commands:
-```sh
-sudo apt install python3-rosdep
-```
-```sh
-sudo rosdep init
-rosdep update
-```
-
-### Dependencies
-Now, clone this repository and use rosdep to install all dependencies automatically:
-```sh
-cd laika_ws && rosdep install --from-paths src -y --ignore-src
-```
+# Wiki
+Check out the wiki: [Wiki](../../wiki)
 
 ## Build
 To finish the install, all packages provided have to be build.
