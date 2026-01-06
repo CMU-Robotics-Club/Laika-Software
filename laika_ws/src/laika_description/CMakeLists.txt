@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.8)
-project(laika_sim)
+project(laika_description)
 
 find_package(ament_cmake REQUIRED)
 
 install(
-  DIRECTORY config launch
+  DIRECTORY meshes xacro launch config
   DESTINATION share/${PROJECT_NAME}/
 )
 

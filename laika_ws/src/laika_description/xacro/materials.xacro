@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<robot>
+    <material name="hip">
+      <color rgba="${100/255} ${110/255} ${180/255} 1.0"/>
+    </material>
+    <material name="upper_leg">
+      <color rgba="${200/255} ${30/255} ${30/255} 1.0"/>
+    </material>
+    <material name="lower_leg">
+      <color rgba="${255/255} ${108/255} ${10/255} 1.0"/>
+    </material>
+</robot>
+

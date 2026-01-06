@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- masses -->
+  <xacro:property name="hip_mass" value="1.0" />
+  <xacro:property name="upper_leg_mass" value="1.0" />
+  <xacro:property name="lower_leg_mass" value="1.0" />
+
+  <!-- damping and friction -->
+  <xacro:property name="hip_damping" value="0.2" />
+  <xacro:property name="hip_friction" value="0.01" />
+  <xacro:property name="knee_damping" value="0.2" />
+  <xacro:property name="knee_friction" value="0.01" />
+
+</robot>
+
