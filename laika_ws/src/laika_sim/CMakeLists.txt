@@ -4,7 +4,7 @@ project(laika_sim)
 find_package(ament_cmake REQUIRED)
 
 install(
-  DIRECTORY config launch
+  DIRECTORY config launch meshes urdf
   DESTINATION share/${PROJECT_NAME}/
 )
 

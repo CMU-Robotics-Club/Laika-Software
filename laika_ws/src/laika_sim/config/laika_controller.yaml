@@ -1,11 +1,48 @@
 controller_manager:
   ros__parameters:
-    update_rate: 1000
+    update_rate: 1500
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
+pidf_controller:
+  ros__parameters:
+    type: pid_controller/PidController 
+    dof_names:
+      - fl_lat_joint
+      - fl_hip_joint
+      - fl_knee_joint
+      - fr_lat_joint
+      - fr_hip_joint
+      - fr_knee_joint
+      - br_lat_joint
+      - br_hip_joint
+      - br_knee_joint
+      - bl_lat_joint
+      - bl_hip_joint
+      - bl_knee_joint
+
+    command_interface: effort
+
+    reference_and_state_interfaces:
+      - position
+      - velocity
+
+    gains:
+      fl_lat_joint:   {"p": 150.0, "i": 0.0, "d": 1.0, "i_clamp_min": -.inf, "i_clamp_max": .inf, "antiwindup_strategy":'none', "feedforward_gain": 0.0}
+      fr_lat_joint:   {"p": 150.0, "i": 0.0, "d": 1.0, "i_clamp_min": -.inf, "i_clamp_max": .inf, "antiwindup_strategy":'none', "feedforward_gain": 0.0}
+      bl_lat_joint:   {"p": 150.0, "i": 0.0, "d": 1.0, "i_clamp_min": -.inf, "i_clamp_max": .inf, "antiwindup_strategy":'none', "feedforward_gain": 0.0}
+      br_lat_joint:   {"p": 150.0, "i": 0.0, "d": 1.0, "i_clamp_min": -.inf, "i_clamp_max": .inf, "antiwindup_strategy":'none', "feedforward_gain": 0.0}
+      fl_hip_joint:   {"p": 150.0, "i": 0.0, "d": 1.0, "i_clamp_min": -.inf, "i_clamp_max": .inf, "antiwindup_strategy":'none', "feedforward_gain": 0.0}
+      fr_hip_joint:   {"p": 150.0, "i": 0.0, "d": 1.0, "i_clamp_min": -.inf, "i_clamp_max": .inf, "antiwindup_strategy":'none', "feedforward_gain": 0.0}
+      bl_hip_joint:   {"p": 150.0, "i": 0.0, "d": 1.0, "i_clamp_min": -.inf, "i_clamp_max": .inf, "antiwindup_strategy":'none', "feedforward_gain": 0.0}
+      br_hip_joint:   {"p": 150.0, "i": 0.0, "d": 1.0, "i_clamp_min": -.inf, "i_clamp_max": .inf, "antiwindup_strategy":'none', "feedforward_gain": 0.0}
+      fl_knee_joint:  {"p": 150.0, "i": 0.0, "d": 1.0, "i_clamp_min": -.inf, "i_clamp_max": .inf, "antiwindup_strategy":'none', "feedforward_gain": 0.0}
+      fr_knee_joint:  {"p": 150.0, "i": 0.0, "d": 1.0, "i_clamp_min": -.inf, "i_clamp_max": .inf, "antiwindup_strategy":'none', "feedforward_gain": 0.0}
+      bl_knee_joint:  {"p": 150.0, "i": 0.0, "d": 1.0, "i_clamp_min": -.inf, "i_clamp_max": .inf, "antiwindup_strategy":'none', "feedforward_gain": 0.0}
+      br_knee_joint:  {"p": 150.0, "i": 0.0, "d": 1.0, "i_clamp_min": -.inf, "i_clamp_max": .inf, "antiwindup_strategy":'none', "feedforward_gain": 0.0}
+
 gz_ros_control:
   ros__parameters:
     hold_joints: false
-    position_proportional_gain: 0.5
+    # position_proportional_gain: 0.5

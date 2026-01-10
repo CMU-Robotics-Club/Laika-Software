@@ -1,126 +1,165 @@
-import os
-import xacro
-from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, OpaqueFunction, IncludeLaunchDescription, RegisterEventHandler
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import RegisterEventHandler
 from launch.event_handlers import OnProcessExit
-from launch.substitutions import PathJoinSubstitution
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
+
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-import xacro
+import sys
 
-def launch_setup(context, *args, **kwargs):
-    log_level = context.launch_configurations['log_level']
-    config = context.launch_configurations['config']
 
-    print("")
-    print("log_level:           " + log_level)
-    print("config:              " + config)
-    print("")
+def generate_launch_description():
+    fly = "false"
+    slide = "false"
+    log_level = 'error'
 
-    world_file_path = PathJoinSubstitution([FindPackageShare('laika_sim'), 'config', 'world.sdf'])
-    robot_description_file_path = os.path.join(get_package_share_directory('laika_description'), 'xacro', 'robot.xacro')
-
-    if (config == "flying_leg"):
-        fly = 'true'
-        slide = 'false'
-        leg_only = 'true'
-    elif (config == "sliding_leg"):
-        fly = 'false'
-        slide = 'true'
-        leg_only = 'true'
-    else:
-        fly = 'false'
-        slide = 'false'
-        leg_only = 'true'
-
-    robot_description = xacro.process_file(robot_description_file_path, mappings={
-        'fly': fly,
-        'slide': slide,
-        'leg_only': leg_only,
-        'simulation': 'true'
-    }).toxml()
+    for arg in sys.argv:
+        if arg.startswith("info:="):
+            content = arg.split(":=")[1]
+            if content == "true":
+                log_level = 'info'
+        if arg.startswith("debug:="):
+            content = arg.split(":=")[1]
+            if content == "true":
+                log_level = 'debug'
+        if arg.startswith("fly:="):
+            content = arg.split(":=")[1]
+            if content == "true":
+                fly = "true"
+        if arg.startswith("slide:="):
+            content = arg.split(":=")[1]
+            if content == "true":
+                slide = "true"
     
-    # robot description publisher
-    robot_state_publisher = Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        name='robot_state_publisher',
-        parameters=[
-            {
-                'publish_frequency': 100.0,
-                'use_tf_static': True,
-                'robot_description': robot_description,
-                'ignore_timestamp': True
-            }
-        ],
-    )
+    print("")
+    print("log_level:           " + str(log_level))
+    print("fly:                 " + str(fly))
+    print("slide:               " + str(slide))
+    print("")
+    # Launch Arguments
+    use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
-    # Gazebo
-    gz_sim = IncludeLaunchDescription(
+    ld = LaunchDescription()
+
+    # Get URDF via xacro
+    if fly=="true":
+        urdf_file_name = "flying_laika.xacro.urdf"
+    elif slide == "true":
+        urdf_file_name = "sliding_laika.xacro.urdf"
+    else:
+        urdf_file_name = "laika.xacro.urdf"
+
+    robot_description = Command(
+        [
+            PathJoinSubstitution([FindExecutable(name='xacro')]),
+            ' ',
+            PathJoinSubstitution(
+                [FindPackageShare('laika_sim'), 'urdf', urdf_file_name]
+                ),
+            ]
+    )
+    robot_description = {'robot_description': robot_description}
+
+    # Specify Gazebo world file (does not include robot itself)
+    world_path = PathJoinSubstitution(
+            [
+                FindPackageShare('laika_sim'),
+                'config',
+                'world.sdf',
+                ]
+            )
+
+    # path to controller config file
+    robot_controller_config_path = PathJoinSubstitution(
+            [
+                FindPackageShare('laika_sim'),
+                'config',
+                'laika_controller.yaml',
+                ]
+            )
+
+    # Start Gazebo with world
+    gazebo = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 [PathJoinSubstitution([FindPackageShare('ros_gz_sim'),
                                        'launch',
                                        'gz_sim.launch.py'])]),
                 launch_arguments={
-                    'gz_args': [' -r -v 1 ', world_file_path],
+                    'gz_args': [' -r -v 1 ', world_path],
                     'on_exit_shutdown': 'True'
                     }.items(),
                 )
+    ld.add_action(gazebo)
 
-
-    gz_spawn_entity = Node(
-        package='ros_gz_sim',
-        executable='create',
+    # Robot State Publisher
+    robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
         output='screen',
-        arguments=['-topic', 'robot_description', '-z', '0.0'],
+        parameters=[robot_description]
     )
+    ld.add_action(robot_state_publisher)
+    
+    # Spawn robot in gz
+    gz_spawn_entity = Node(
+            package='ros_gz_sim',
+            executable='create',
+            output='screen',
+            arguments=['-topic', 'robot_description',
+                       '-name', 'laika', '-allow_renaming', 'true'],
+            )
+    ld.add_action(gz_spawn_entity)
 
-    joint_state_broadcaster = Node(
+    joint_state_broadcaster_spawner = Node(
             package='controller_manager',
             executable='spawner',
             arguments=['joint_state_broadcaster'],
             )
+    # ld.add_action(joint_state_broadcaster_spawner)
 
-    gz_bridge = Node(
+    joint_trajectory_controller_spawner = Node(
+            package='controller_manager',
+            executable='spawner',
+            arguments=[
+                # 'joint_trajectory_controller',
+                'pidf_controller',
+                '--param-file',
+                robot_controller_config_path,
+                ],
+            )
+    # ld.add_action(joint_trajectory_controller_spawner)
+
+    ld.add_action(RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=gz_spawn_entity,
+            on_exit=[joint_state_broadcaster_spawner],
+            )
+        ))
+    ld.add_action(RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=joint_state_broadcaster_spawner,
+            on_exit=[joint_trajectory_controller_spawner],
+            )
+        ))
+    
+    # Bridge
+    bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
         arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
         output='screen'
     )
+    ld.add_action(bridge)
 
-    return [
-        gz_bridge,
-        gz_sim,
-        robot_state_publisher,
-        gz_spawn_entity,
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=gz_spawn_entity,
-                on_exit=[joint_state_broadcaster],
-            )
-        ),
-    ]
-
-
-def generate_launch_description():
-    # add launch arguments
-    launch_arguments = []
-    launch_arguments.append(
+    # Launch Arguments
+    ld.add_action(
             DeclareLaunchArgument(
-                'log_level',
-                default_value='error',
-                description='log_level [info, error, debug]'
-                )
-            )
+                'use_sim_time',
+                default_value=use_sim_time,
+                description='If true, use simulated clock'))
 
-    launch_arguments.append(
-            DeclareLaunchArgument(
-                'config',
-                default_value='leg',
-                description='config [leg, flying_leg, sliding_leg]'
-                )
-            )
 
-    return LaunchDescription(launch_arguments + [OpaqueFunction(function=launch_setup)])
+    return ld
