@@ -1,0 +1,63 @@
+laika_pid_controller:
+  joints: {
+    type: string_array,
+    default_value: [],
+    description: "Specifies joints used by the controller",
+    read_only: true,
+    validation: {
+      unique<>: null,
+      not_empty<>: null,
+    }
+  }
+  gains:
+    __map_joints:
+      position_p: {
+        type: double,
+        default_value: 0.0,
+        description: "Position proportional gain for PID"
+      }
+      position_i: {
+        type: double,
+        default_value: 0.0,
+        description: "Position integral gain for PID"
+      }
+      position_d: {
+        type: double,
+        default_value: 0.0,
+        description: "Position serivative gain for PID"
+      }
+      position_output_max: {
+        type: double,
+        default_value: .inf,
+        description: "Position upper output limit."
+      }
+      position_output_min: {
+        type: double,
+        default_value: -.inf,
+        description: "Position lower output limit."
+      }
+      velocity_p: {
+        type: double,
+        default_value: 0.0,
+        description: "Velocity proportional gain for PID"
+      }
+      velocity_i: {
+        type: double,
+        default_value: 0.0,
+        description: "Velocity integral gain for PID"
+      }
+      velocity_d: {
+        type: double,
+        default_value: 0.0,
+        description: "Velocity serivative gain for PID"
+      }
+      velocity_output_max: {
+        type: double,
+        default_value: .inf,
+        description: "Velocity upper output limit."
+      }
+      velocity_output_min: {
+        type: double,
+        default_value: -.inf,
+        description: "Velocity lower output limit."
+      }

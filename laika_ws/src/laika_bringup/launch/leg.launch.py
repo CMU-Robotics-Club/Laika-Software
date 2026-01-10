@@ -2,12 +2,8 @@ import os
 import xacro
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, OpaqueFunction, IncludeLaunchDescription, RegisterEventHandler
-from launch.event_handlers import OnProcessExit
-from launch.substitutions import PathJoinSubstitution
+from launch.actions import DeclareLaunchArgument, OpaqueFunction
 from launch_ros.actions import Node
-from launch_ros.substitutions import FindPackageShare
-from launch.launch_description_sources import PythonLaunchDescriptionSource
 import xacro
 
 def launch_setup(context, *args, **kwargs):
@@ -16,24 +12,10 @@ def launch_setup(context, *args, **kwargs):
 
     print("")
     print("log_level:           " + log_level)
-    # print("config:              " + config)
     print("")
 
     robot_description_file_path = os.path.join(get_package_share_directory('laika_description'), 'xacro', 'robot.xacro')
     controller_config_path = os.path.join(get_package_share_directory('laika_pid_controller'), 'config', 'leg_pid_controllers.yaml')
-
-    # if (config == "flying_leg"):
-    #     fly = 'true'
-    #     slide = 'false'
-    #     leg_only = 'true'
-    # elif (config == "sliding_leg"):
-    #     fly = 'false'
-    #     slide = 'true'
-    #     leg_only = 'true'
-    # else:
-    #     fly = 'false'
-    #     slide = 'false'
-    #     leg_only = 'true'
 
     robot_description = xacro.process_file(robot_description_file_path, mappings={
         'fly': 'false',
@@ -72,7 +54,7 @@ def launch_setup(context, *args, **kwargs):
         package="controller_manager",
         executable="spawner",
         output="both",
-        arguments=["joint_state_broadcaster", "--ros-args", "--log-level", log_level]
+        arguments=["joint_state_broadcaster", "--param-file", controller_config_path, "--ros-args", "--log-level", log_level]
     )
 
     # PID Controller Spawner (starts the custom controller)
@@ -80,7 +62,7 @@ def launch_setup(context, *args, **kwargs):
         package="controller_manager",
         executable="spawner",
         output="both",
-        arguments=["odrive_controller", "--param-file", controller_config_path, "--ros-args", "--log-level", log_level]
+        arguments=["laika_pid_controller", "--param-file", controller_config_path, "--ros-args", "--log-level", log_level]
     )
 
     return [
@@ -101,13 +83,4 @@ def generate_launch_description():
                 description='log_level [info, error, debug]'
                 )
             )
-
-    # launch_arguments.append(
-    #         DeclareLaunchArgument(
-    #             'config',
-    #             default_value='leg',
-    #             description='config [leg, flying_leg, sliding_leg]'
-    #             )
-    #         )
-
     return LaunchDescription(launch_arguments + [OpaqueFunction(function=launch_setup)])

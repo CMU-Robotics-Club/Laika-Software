@@ -1,0 +1,29 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 1000  # Update rate in Hz
+
+    # Joint State Broadcaster (no configuration needed)
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    # Custom Odrive Controller 
+    laika_pid_controller:
+      type: laika_pid_controller/LaikaPidController
+
+laika_pid_controller:
+  ros__parameters:
+    # Joints: specify names of joints to be controlled
+    joints:
+      - hip_joint
+      - knee_joint
+
+    # Gains for position and velocity pid controllers
+    gains:
+      hip_joint: {
+        "position_p": 30.0, "position_i": 0.0, "position_d": 0.0, "position_output_min:": -.inf, "position_output_max:": .inf,
+        "velocity_p": 0.2, "velocity_i": 4.0, "velocity_d": 0.0, "velocity_output_min:": -.inf, "velocity_output_max:": .inf,
+      }
+      knee_joint: {
+        "position_p": 30.0, "position_i": 0.0, "position_d": 0.0, "position_output_min:": -.inf, "position_output_max:": .inf,
+        "velocity_p": 0.2, "velocity_i": 4.0, "velocity_d": 0.0, "velocity_output_min:": -.inf, "velocity_output_max:": .inf,
+      }

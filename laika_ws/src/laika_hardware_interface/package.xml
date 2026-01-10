@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>laika_hardware_interface</name>
+  <version>0.0.0</version>
+  <description>hardware interface to control motors using an odrive s1</description>
+  <maintainer email="alexander@minor.pw">Alexander Minor</maintainer>
+  <license>GNU General Public License v3.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- Dependencies -->
+  <depend>controller_manager</depend>
+  <depend>control_msgs</depend>
+  <depend>robot_state_publisher</depend>
+  <depend>xacro</depend>
+  <depend>joint_state_publisher</depend>
+  <depend>joint_state_publisher_gui</depend>
+  <depend>ros2_control_cmake</depend>
+  <depend>ros2_control</depend>
+  <depend>ros2_controllers</depend>
+  <depend>ros2controlcli</depend>
+  <depend>can-utils</depend>
+  <depend>foxglove_bridge</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

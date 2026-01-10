@@ -1,0 +1,9 @@
+<library path="laika_hardware_interface">
+  <class name="laika_hardware_interface/LaikaHardwareInterface"
+         type="laika_hardware_interface::LaikaHardwareInterface"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      The ros2_control example for odrive s1.
+    </description>
+  </class>
+</library>
