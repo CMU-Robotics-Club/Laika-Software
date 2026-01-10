@@ -3,6 +3,7 @@ CATKIN_IGNORE
 # Ignore build and install directories
 build/
 install/
+.cache/
 log/
 .colcon/
 .ros/
