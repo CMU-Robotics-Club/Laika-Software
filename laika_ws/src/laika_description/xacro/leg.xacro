@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
   <!-- Left Leg Macro -->
-  <xacro:macro name="left_leg" params="name *origin">
+  <xacro:macro name="leg" params="*origin">
 
     <!-- base link -->
-    <joint name="base_to_${name}_hip" type="fixed">
+    <joint name="base_to_hip" type="fixed">
       <xacro:insert_block name="origin"/>
       <parent link="base"/>
-      <child link="${name}_hip_link"/>
+      <child link="hip_link"/>
     </joint>
 
     <!-- Hip Link -->
-    <link name="${name}_hip_link">
+    <link name="hip_link">
       <visual>
         <origin xyz="-2.18152e-18 5.38878e-34 -8.80055e-18" rpy="6.12323e-17 -0 0"/>
         <geometry>
@@ -32,7 +32,7 @@
       </inertial>
     </link>
     <!-- Upper Leg Link -->
-    <link name="${name}_upper_leg_link">
+    <link name="upper_leg_link">
       <visual>
         <origin xyz="6.50521e-18 1.38778e-17 -0.0175" rpy="1.5708 -6.82067e-39 0"/>
         <geometry>
@@ -53,7 +53,7 @@
       </inertial>
     </link>
     <!-- Lower Leg Link -->
-    <link name="${name}_lower_leg_link">
+    <link name="lower_leg_link">
       <visual>
         <origin xyz="0 -0.07 -0.0105" rpy="-1.5708 -1.10793e-33 0"/>
         <geometry>
@@ -75,19 +75,19 @@
     </link>
 
     <!-- Hip Joint -->
-    <joint name="${name}_hip_joint" type="revolute">
+    <joint name="hip_joint" type="revolute">
       <origin xyz="-7.11766e-17 -0.106 -0.0495" rpy="-1.5708 1.01231e-16 -2.87032e-22"/>
-      <parent link="${name}_hip_link"/>
-      <child link="${name}_upper_leg_link"/>
+      <parent link="hip_link"/>
+      <child link="upper_leg_link"/>
       <axis xyz="0 0 1"/>
       <limit effort="1000" lower="0" upper="${pi/2}" velocity="10"/>
       <dynamics damping="${hip_damping}" friction="${hip_friction}"/>
     </joint>
     <!-- Knee Joint -->
-    <joint name="${name}_knee_joint" type="revolute">
+    <joint name="knee_joint" type="revolute">
       <origin xyz="0.35 1.59595e-16 -0.028" rpy="-3.14159 1.11613e-17 1.67306e-17"/>
-      <parent link="${name}_upper_leg_link"/>
-      <child link="${name}_lower_leg_link"/>
+      <parent link="upper_leg_link"/>
+      <child link="lower_leg_link"/>
       <axis xyz="0 0 1"/>
       <limit effort="1000" lower="0" upper="${pi}" velocity="10"/>
       <dynamics damping="${knee_damping}" friction="${knee_friction}"/>

@@ -7,7 +7,7 @@
 
     <xacro:include filename="$(find laika_description)/xacro/const.xacro"/>
     <xacro:include filename="$(find laika_description)/xacro/materials.xacro"/>
-    <xacro:include filename="$(find laika_description)/xacro/left_leg.xacro"/>
+    <xacro:include filename="$(find laika_description)/xacro/leg.xacro"/>
 
     <!-- fly -->
     <xacro:if value="$(arg fly)">
@@ -52,37 +52,20 @@
     <link name="base"/>
     <!-- legs -->
     <xacro:if value="$(arg leg_only)">
-      <xacro:left_leg name="left">
+      <xacro:leg>
         <origin xyz="0 0 0" rpy="0 0 ${-pi/2}"/>
-      </xacro:left_leg>
+      </xacro:leg>
     </xacro:if>
 
-    <!-- simulation -->
-    <xacro:if value="$(arg simulation)">
-      <xacro:if value="$(arg leg_only)">
-        <ros2_control name="GazeboSystem" type="system">
-          <hardware>
-            <plugin>gz_ros2_control/GazeboSimSystem</plugin>
-          </hardware>
-          <joint name="left_hip_joint">
-            <command_interface name="effort" />
-            <state_interface name="position" />
-            <state_interface name="velocity" />
-            <state_interface name="effort" />
-          </joint>
-          <joint name="left_knee_joint">
-            <command_interface name="effort" />
-            <state_interface name="position" />
-            <state_interface name="velocity" />
-            <state_interface name="effort" />
-          </joint>
-        </ros2_control>
+    <!-- leg only -->
+    <xacro:if value="$(arg leg_only)">
+      <!-- simulation -->
+      <xacro:if value="$(arg simulation)">
+        <xacro:include filename="$(find laika_description)/xacro/leg_gazebo.xacro"/>
       </xacro:if>
-      <gazebo>
-        <plugin filename="libgz_ros2_control-system.so" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-          <parameters>$(find laika_sim)/config/laika_controller.yaml</parameters>
-        </plugin>
-      </gazebo>
-  </xacro:if>
-
+      <!-- real -->
+      <xacro:unless value="$(arg simulation)">
+        <xacro:include filename="$(find laika_description)/xacro/leg_ros2_control.xacro"/>
+      </xacro:unless>
+    </xacro:if>
 </robot>
