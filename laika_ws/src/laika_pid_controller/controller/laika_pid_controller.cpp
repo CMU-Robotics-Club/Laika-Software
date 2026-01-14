@@ -98,11 +98,11 @@ controller_interface::return_type LaikaPidController::update(const rclcpp::Time 
   for (auto& joint : joints) {
     // position pid
     if (std::isnan(joint.position_reference) || std::isnan(joint.position_state)) {continue;}
-    double position_error = joint.position_reference - joint.position_state;
+    double position_error = (joint.position_reference * 14) - (joint.position_state * 14);
     double temp_output = joint.position_pid->compute_command(position_error, period);
     // velocity pid
     if (std::isnan(joint.velocity_state)) {continue;}
-    double velocity_error = temp_output - joint.velocity_state;
+    double velocity_error = temp_output - (joint.velocity_state * 14);
     joint.effort_command = joint.velocity_pid->compute_command(velocity_error, period);
     // write effort value
     if (!command_interfaces_[joint.id].set_value(joint.effort_command)) {

@@ -110,8 +110,6 @@ namespace laika_hardware_interface
     // write parameters
     for (auto& joint : joints) {
       joint.set_motor_limits();
-      // joint.set_trajectory_limits();
-      // joint.set_gains();
     }
 
     return hardware_interface::CallbackReturn::SUCCESS;
@@ -194,34 +192,12 @@ namespace laika_hardware_interface
       }
     }
 
-
     // set command position to all joints
     for (auto &joint : joints) {
       if (joint.previous_mode != joint.mode) {
         joint.set_mode();
       }
       joint.previous_mode = joint.mode;
-      // position_filtered
-      // if ((int)joint.mode == Modes::POSITION_FILTERED) {
-      //   Set_Input_Pos_msg_t msg;
-      //   msg.Input_Pos = joint.position_command / (2 * M_PI);
-      //   msg.Vel_FF = joint.velocity_command / (2 * M_PI);
-      //   msg.Torque_FF = joint.effort_command / (2 * M_PI);
-      //   joint.send(msg);
-      // // position_trajectory
-      // } else if ((int)joint.mode == Modes::POSITION_TRAJECTORY) {
-      //   Set_Input_Pos_msg_t msg;
-      //   msg.Input_Pos = joint.position_command / (2 * M_PI);
-      //   msg.Vel_FF = 0.0;
-      //   msg.Torque_FF = 0.0;
-      //   joint.send(msg);
-      // // velocity_ramped
-      // } else if ((int)joint.mode == Modes::VELOCITY_RAMPED) {
-      //   Set_Input_Vel_msg_t msg;
-      //   msg.Input_Vel = joint.velocity_command / (2 * M_PI);
-      //   msg.Input_Torque_FF = 0.0;
-      //   joint.send(msg);
-      // torque_control
       if ((int)joint.mode == Modes::TORQUE_CONTROL) {
         Set_Input_Torque_msg_t msg;
         msg.Input_Torque = joint.effort_command;
@@ -307,8 +283,13 @@ namespace laika_hardware_interface
     }
     Get_Encoder_Estimates_msg_t msg;
     msg.decode_buf(frame.data);
-    position_state = msg.Pos_Estimate * (2 * M_PI);
-    velocity_state = msg.Vel_Estimate * (2 * M_PI);
+    if (name.find("hip") != std::string::npos) {
+      position_state = msg.Pos_Estimate * (2 * M_PI) / 14;
+      velocity_state = msg.Vel_Estimate * (2 * M_PI) / 14;
+    } else {
+      position_state = msg.Pos_Estimate * (2 * M_PI);
+      velocity_state = msg.Vel_Estimate * (2 * M_PI);
+    }
   }
   void LaikaHardwareInterface::Joint::on_torque_feedback(const can_frame& frame) {
     if (frame.can_dlc < Get_Torques_msg_t::msg_length) {
