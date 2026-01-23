@@ -11,3 +11,12 @@ log/
 __pycache__/
 *.pyc
 *.pyo
+
+# CasADi JIT temporary files
+jit_tmp*
+tmp_casadi_compiler*
+
+# Python Virtual Environment
+.venv/
+venv/
+ENV/

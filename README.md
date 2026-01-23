@@ -77,3 +77,9 @@ Make the joints extended:
 ros2 run laika_control set_joints_extended
 ```
 
+## MPC sim + dummy physics node
+need casadi >= 3.6.0
+
+pip3 install -r requirements.txt --break-system-packages
+- yes the flag scares me
+

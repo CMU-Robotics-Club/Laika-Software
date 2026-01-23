@@ -1,28 +1,43 @@
 controller_manager:
   ros__parameters:
-    update_rate: 1000
+    update_rate: 1000  # 1kHz control loop
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-pidf_controller:
+    # CHANGED: Registering the new controller type
+    leg_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+leg_controller:
   ros__parameters:
-    type: pid_controller/PidController 
-    dof_names:
-      - fr_hip_joint
-      - fr_knee_joint
-
-    command_interface: effort
-
-    reference_and_state_interfaces:
+    command_interfaces:
+      - effort
+    state_interfaces:
       - position
       - velocity
+    joints:
+      - fr_hip_joint
+      - fr_knee_joint
+    
+    allow_nonzero_velocity_at_trajectory_end: true
+    # Critical for ensuring your P/D gains are actually used
+    open_loop_control: false
+    allow_partial_joints_goal: false
 
     gains:
-      fr_hip_joint:   {"p": 50.0, "i": 0.0, "d": 1.0, "i_clamp_min": -.inf, "i_clamp_max": .inf, "antiwindup_strategy":'none', "feedforward_gain": 0.0}
-      fr_knee_joint:  {"p": 50.0, "i": 0.0, "d": 1.0, "i_clamp_min": -.inf, "i_clamp_max": .inf, "antiwindup_strategy":'none', "feedforward_gain": 0.0}
+      fr_hip_joint:
+        p: 50.0
+        d: 7.0
+        i: 0.0
+        ff_velocity_scale: 1.0  # Enables Velocity Feed Forward
+      fr_knee_joint:
+        p: 50.0
+        d: 7.0
+        i: 0.0
+        ff_velocity_scale: 1.0
 
+# KEPT: Your original simulation settings
 gz_ros_control:
   ros__parameters:
     hold_joints: false
-    # position_proportional_gain: 0.5

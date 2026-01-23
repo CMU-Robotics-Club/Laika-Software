@@ -35,7 +35,7 @@ class RobotConfig:
         # SOFTENED: Reduced from 100,000 to prevent crash on landing
         self.w_foot_y    = 10000.0 
         self.w_foot_x    = 5000.0   
-        self.w_retract   = 1000.0   
+        self.w_retract   = 500.0   
         self.w_height    = 2000.0   
         
         self.w_torque    = 0.01     

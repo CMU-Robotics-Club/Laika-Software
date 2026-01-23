@@ -130,7 +130,7 @@ def generate_launch_description():
             executable='spawner',
             arguments=[
                 # 'joint_trajectory_controller',
-                'pidf_controller',
+                'leg_controller',
                 '--param-file',
                 robot_controller_config_path,
                 ],

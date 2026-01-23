@@ -158,6 +158,10 @@
     <hardware>
       <plugin>gz_ros2_control/GazeboSimSystem</plugin>
     </hardware>
+    <joint name="slider_to_cart">
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
     <joint name="fr_hip_joint">
       <command_interface name="effort" />
       <state_interface name="position" />
@@ -172,7 +176,20 @@
 
   <gazebo>
     <plugin filename="libgz_ros2_control-system.so" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-      <parameters>$(find laika_sim)/config/laika_controller.yaml</parameters>
+      <parameters>$(find laika_sim)/config/test_stand_controller.yaml</parameters>
     </plugin>
   </gazebo>
+  
+  <gazebo reference="fr_sphere">
+    <mu1>0.9</mu1> 
+    <mu2>0.9</mu2>
+    
+    <kp>1000000.0</kp> 
+    <kd>1.0</kd>
+    
+    <minDepth>0.001</minDepth>
+    
+    <material>Gazebo/Red</material>
+  </gazebo>
+
 </robot>
