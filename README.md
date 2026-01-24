@@ -77,9 +77,25 @@ Make the joints extended:
 ros2 run laika_control set_joints_extended
 ```
 
-## MPC sim + dummy physics node
-need casadi >= 3.6.0
+## MPC Development (Jumping Leg)
+This section covers running the jumping leg controller we have been developing.
 
-pip3 install -r requirements.txt --break-system-packages
-- yes the flag scares me
+### Prerequisites (CasADi C++)
+For the C++ MPC node to work, you cannot just use `pip install casadi`. You must download the CasADi source/binaries and compile/install the C++ libraries globally so `leg_mpc_cpp` can link against them.
 
+### Running the System
+You will need 3 separate terminals. Source the workspace in each.
+
+1. Launch the simulation with the test stand:
+```sh
+ros2 launch laika_sim simulation.launch.py test_stand:=true
+``````
+2. Run Python vis
+```sh
+ros2 run leg_sim_py leg_viz_node
+``````
+3. Run actual mpc node
+```sh
+ros2 run leg_mpc_cpp mpc_node
+
+```
