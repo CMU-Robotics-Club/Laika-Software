@@ -48,7 +48,7 @@
   </joint>
 
   <!-- CONSTANTS -->
-  <xacro:property name="damping" value="0.2" />
+  <xacro:property name="damping" value="0.4" />
   <xacro:property name="friction" value="0.01" />
 
   <!-- SPHERES AT THE END -->
@@ -104,14 +104,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="$(find laika_sim)/meshes/fl_upper_link.STL"/>
+        <mesh filename="$(find laika_sim)/meshes/fr_upper_link.STL"/>
       </geometry>
       <material name="upper"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="$(find laika_sim)/meshes/fl_upper_link.STL"/>
+        <mesh filename="$(find laika_sim)/meshes/fr_upper_link.STL"/>
       </geometry>
     </collision>
   </link>
@@ -184,8 +184,8 @@
     <mu1>0.9</mu1> 
     <mu2>0.9</mu2>
     
-    <kp>1000000.0</kp> 
-    <kd>1.0</kd>
+    <kp>50000.0</kp> 
+    <kd>100.0</kd>
     
     <minDepth>0.001</minDepth>
     
