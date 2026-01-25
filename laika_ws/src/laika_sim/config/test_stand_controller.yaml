@@ -27,8 +27,8 @@ leg_controller:
 
     gains:
       fr_hip_joint:
-        p: 20.0
-        d: 5.0
+        p: 40.0
+        d: 10.0
         i: 0.0
         ff_velocity_scale: 1.0  # Enables Velocity Feed Forward
       fr_knee_joint:
