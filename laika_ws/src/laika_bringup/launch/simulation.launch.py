@@ -21,6 +21,7 @@ def launch_setup(context, *args, **kwargs):
 
     world_file_path = PathJoinSubstitution([FindPackageShare('laika_sim'), 'config', 'world.sdf'])
     robot_description_file_path = os.path.join(get_package_share_directory('laika_description'), 'xacro', 'robot.xacro')
+    controller_config_path = os.path.join(get_package_share_directory('laika_pid_controller'), 'config', 'real_leg_pid_controller_config.yaml')
 
     if (config == "flying_leg"):
         fly = 'true'
@@ -65,7 +66,7 @@ def launch_setup(context, *args, **kwargs):
         ],
     )
 
-    # Gazebo
+    # Start Gazebo with world specifications (stuff like physics)
     gz_sim = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 [PathJoinSubstitution([FindPackageShare('ros_gz_sim'),
@@ -77,7 +78,7 @@ def launch_setup(context, *args, **kwargs):
                     }.items(),
                 )
 
-
+    # spawn our robot in gazebo
     gz_spawn_entity = Node(
         package='ros_gz_sim',
         executable='create',
@@ -85,11 +86,30 @@ def launch_setup(context, *args, **kwargs):
         arguments=['-topic', 'robot_description', '-z', height],
     )
 
-    joint_state_broadcaster = Node(
-            package='controller_manager',
-            executable='spawner',
-            arguments=['joint_state_broadcaster'],
-            )
+    # Controller Manager (starts and loads hardware interface)
+    controller_manager = Node(
+        package="controller_manager",
+        executable="ros2_control_node",
+        parameters=[controller_config_path],
+        output="both",
+        arguments=["--ros-args", "--log-level", log_level]
+    )
+
+    # Joint State Broadcaster (publishes position, velocity and effort of each joint from the harware interface)
+    joint_state_broadcaster_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        output="both",
+        arguments=["joint_state_broadcaster", "--param-file", controller_config_path, "--ros-args", "--log-level", log_level]
+    )
+
+    # PID Controller Spawner (starts the custom controller)
+    laika_pid_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        output="both",
+        arguments=["laika_pid_controller", "--param-file", controller_config_path, "--ros-args", "--log-level", log_level]
+    )
 
     gz_bridge = Node(
         package='ros_gz_bridge',
@@ -102,11 +122,12 @@ def launch_setup(context, *args, **kwargs):
         gz_bridge,
         gz_sim,
         robot_state_publisher,
+        controller_manager,
         gz_spawn_entity,
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=gz_spawn_entity,
-                on_exit=[joint_state_broadcaster],
+                on_exit=[joint_state_broadcaster_spawner, laika_pid_controller_spawner],
             )
         ),
     ]

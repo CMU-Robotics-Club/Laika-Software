@@ -20,10 +20,14 @@ laika_pid_controller:
     # Gains for position and velocity pid controllers
     gains:
       hip_joint: {
-        "position_p": 30.0, "position_i": 0.0, "position_d": 0.0, "position_output_min:": -.inf, "position_output_max:": .inf,
-        "velocity_p": 0.2, "velocity_i": 4.0, "velocity_d": 0.0, "velocity_output_min:": -.inf, "velocity_output_max:": .inf,
+        "position_p": 40.0, "position_i": 0.0, "position_d": 0.0, "position_output_min:": -.inf, "position_output_max:": .inf,
+        "velocity_p": 0.4, "velocity_i": 0.0, "velocity_d": 0.0, "velocity_output_min:": -.inf, "velocity_output_max:": .inf,
       }
       knee_joint: {
-        "position_p": 30.0, "position_i": 0.0, "position_d": 0.0, "position_output_min:": -.inf, "position_output_max:": .inf,
-        "velocity_p": 0.2, "velocity_i": 4.0, "velocity_d": 0.0, "velocity_output_min:": -.inf, "velocity_output_max:": .inf,
+        "position_p": 40.0, "position_i": 0.0, "position_d": 0.0, "position_output_min:": -.inf, "position_output_max:": .inf,
+        "velocity_p": 0.4, "velocity_i": 0.0, "velocity_d": 0.0, "velocity_output_min:": -.inf, "velocity_output_max:": .inf,
       }
+
+gz_ros_control:
+  ros__parameters:
+    hold_joints: false

@@ -24,11 +24,8 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'input = laika_control.input:main',
-            'set_joints_sin = laika_control.set_joints_sin:main',
-            'set_joints_random = laika_control.set_joints_random:main',
-            'set_joints_extended = laika_control.set_joints_extended:main',
-            'sin_walk = laika_control.sin_walk:main'
+            'joint_sin_publisher = laika_control.joint_sin_publisher:main',
+            'joint_value_publisher = laika_control.joint_value_publisher:main',
         ],
     },
 )

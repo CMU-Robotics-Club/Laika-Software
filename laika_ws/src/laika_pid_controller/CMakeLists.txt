@@ -51,16 +51,6 @@ install(TARGETS laika_pid_controller laika_pid_controller_parameters EXPORT expo
 install(TARGETS laika_pid_controller EXPORT export_laika_pid_controller)
 install(DIRECTORY controller/include DESTINATION share/laika_pid_controller)
 
-######### ODrive Controller Value Publisher
-add_executable(laika_pid_controller_value_publisher testing/laika_pid_controller_value_publisher.cpp)
-ament_target_dependencies(laika_pid_controller_value_publisher rclcpp control_msgs)
-install(TARGETS laika_pid_controller_value_publisher DESTINATION lib/${PROJECT_NAME})
-
-######### ODrive Controller Sin Publisher
-add_executable(laika_pid_controller_sin_publisher testing/laika_pid_controller_sin_publisher.cpp)
-ament_target_dependencies(laika_pid_controller_sin_publisher rclcpp control_msgs)
-install(TARGETS laika_pid_controller_sin_publisher DESTINATION lib/${PROJECT_NAME})
-
 ######### Install
 install(
   DIRECTORY launch config
