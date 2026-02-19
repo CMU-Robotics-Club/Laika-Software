@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Left Leg Macro -->
+  <xacro:macro name="leg" params="*origin">
+
+    <!-- base link -->
+    <joint name="base_to_hip" type="fixed">
+      <xacro:insert_block name="origin"/>
+      <parent link="base"/>
+      <child link="hip_link"/>
+    </joint>
+
+    <!-- Hip Link -->
+    <link name="hip_link">
+      <visual>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <mesh filename="file://$(find laika_description)/meshes/fl_hip_link.stl"/>
+        </geometry>
+        <material name="hip"/>
+      </visual>
+      <collision>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <mesh filename="file://$(find laika_description)/meshes/fl_hip_link.stl"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <origin rpy="0 0 0" xyz="-1.9392E-08 -0.0031976 0.0477"/>
+        <mass value="1.6958"/>
+        <inertia ixx="0.0058498" ixy="2.112E-10" ixz="-4.0096E-11" iyy="0.0030459" iyz="-0.00030042" izz="0.0066374"/>
+      </inertial>
+    </link>
+    <link name="upper_link">
+      <inertial>
+        <origin rpy="0 0 0" xyz="0.13279 0 0.018"/>
+        <mass value="0.97882"/>
+        <inertia ixx="0.00063207" ixy="-1.319E-19" ixz="1.0666E-19" iyy="0.010367" iyz="2.9899E-20" izz="0.010777"/>
+      </inertial>
+      <visual>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <mesh filename="file://$(find laika_description)/meshes/fl_upper_link.stl"/>
+        </geometry>
+        <material name="upper_leg"/>
+      </visual>
+      <collision>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <mesh filename="file://$(find laika_description)/meshes/fl_upper_link.stl"/>
+        </geometry>
+      </collision>
+    </link>
+    <link name="lower_link">
+      <inertial>
+        <origin rpy="0 0 0" xyz="-0.156194569361722 -0.0439524151267173 0.0125"/>
+        <mass value="0.262408631372316"/>
+        <inertia ixx="7.87592224730255E-05" ixy="-0.000247209665534184" ixz="1.36427507036098E-19" iyy="0.00476565441187624" iyz="1.51028668152663E-20" izz="0.00482182622024161"/>
+      </inertial>
+      <visual>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <mesh filename="file://$(find laika_description)/meshes/fl_lower_link.stl"/>
+        </geometry>
+        <material name="lower_leg"/>
+      </visual>
+      <collision>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <mesh filename="file://$(find laika_description)/meshes/fl_lower_link.stl"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="hip_joint" type="revolute">
+      <origin rpy="0 0 0" xyz="0 -0.046 0.09"/>
+      <parent link="hip_link"/>
+      <child link="upper_link"/>
+      <axis xyz="0 0 -1"/>
+      <limit effort="1000" lower="0" upper="${pi/2}" velocity="100"/>
+      <dynamics damping="${hip_damping}" friction="${hip_friction}"/>
+    </joint>
+    <joint name="knee_joint" type="revolute">
+      <origin rpy="0 0 0.04573" xyz="0.35 0 0.0055"/>
+      <parent link="upper_link"/>
+      <child link="lower_link"/>
+      <axis xyz="0 0 1"/>
+      <limit effort="100" lower="0" upper="${pi}" velocity="100"/>
+      <dynamics damping="${knee_damping}" friction="${knee_friction}"/>
+    </joint>
+
+
+  </xacro:macro>
+</robot>
