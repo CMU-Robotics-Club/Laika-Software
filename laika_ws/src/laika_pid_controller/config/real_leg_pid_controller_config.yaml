@@ -6,7 +6,7 @@ controller_manager:
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-    # Custom Odrive Controller 
+    # Laika PID Controller
     laika_pid_controller:
       type: laika_pid_controller/LaikaPidController
 
