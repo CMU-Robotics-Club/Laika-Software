@@ -19,8 +19,7 @@
   </ros2_control>
   <gazebo>
     <plugin filename="libgz_ros2_control-system.so" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-      <parameters>$(find laika_sim)/config/laika_controller.yaml</parameters>
-      <parameters>$(find laika_pid_controller)/config/leg_pid_controllers.yaml</parameters>
+      <parameters>$(find laika_pid_controller)/config/sim_leg_pid_controller_config.yaml</parameters>
     </plugin>
   </gazebo>
 </robot>
