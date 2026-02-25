@@ -48,7 +48,7 @@
   </joint>
 
   <!-- CONSTANTS -->
-  <xacro:property name="damping" value="0.4" />
+  <xacro:property name="damping" value="4.0" />
   <xacro:property name="friction" value="0.01" />
 
   <!-- SPHERES AT THE END -->
@@ -78,7 +78,7 @@
   <link name="fr_hip_link">
     <inertial>
       <origin rpy="0 0 0" xyz="-1.93920088320532E-08 0.00319763205128835 -0.0477002276240959"/>
-      <mass value="1.69584433341635"/>
+      <mass value="2.69584433341635"/>
       <inertia ixx="0.00584981474763869" ixy="-2.11198615336347E-10" ixz="4.00957613383728E-11" iyy="0.00304591016123344" iyz="-0.000300415078157884" izz="0.0066373785606837"/>
     </inertial>
     <visual>
@@ -142,7 +142,7 @@
     <parent link="fr_hip_link"/>
     <child link="fr_upper_link"/>
     <axis xyz="0 0 -1"/>
-    <limit effort="1000" lower="${-pi}" upper="${2*pi}" velocity="100"/>
+    <limit effort="120" lower="${-pi}" upper="${2*pi}" velocity="20"/>
     <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
   <joint name="fr_knee_joint" type="revolute">
@@ -150,7 +150,7 @@
     <parent link="fr_upper_link"/>
     <child link="fr_lower_link"/>
     <axis xyz="0 0 1"/>
-    <limit effort="1000" lower="0" upper="${2*pi}" velocity="100"/>
+    <limit effort="120" lower="0" upper="${2*pi}" velocity="20"/>
     <dynamics damping="${damping}" friction="${friction}"/>
   </joint>
 
@@ -184,7 +184,7 @@
     <mu1>0.9</mu1> 
     <mu2>0.9</mu2>
     
-    <kp>50000.0</kp> 
+    <kp>1000.0</kp> 
     <kd>100.0</kd>
     
     <minDepth>0.001</minDepth>
