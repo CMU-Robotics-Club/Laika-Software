@@ -15,7 +15,7 @@ def launch_setup(context, *args, **kwargs):
     print("")
 
     robot_description_file_path = os.path.join(get_package_share_directory('laika_description'), 'xacro', 'robot.xacro')
-    controller_config_path = os.path.join(get_package_share_directory('laika_pid_controller'), 'config', 'leg_pid_controllers.yaml')
+    controller_config_path = os.path.join(get_package_share_directory('laika_pid_controller'), 'config', 'real_leg_pid_controller_config.yaml')
 
     robot_description = xacro.process_file(robot_description_file_path, mappings={
         'fly': 'false',

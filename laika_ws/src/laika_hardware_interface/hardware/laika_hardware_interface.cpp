@@ -20,6 +20,7 @@ namespace laika_hardware_interface
     RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "[PARAM] CAN inteface: %s", can_interface_name_.c_str());
 
     // load joints 
+    uint8_t id = 0;
     for (const hardware_interface::ComponentInfo & joint_info : info_.joints)
     {
       // Check for correct size of command and state interfaces
@@ -35,6 +36,8 @@ namespace laika_hardware_interface
       // create joint object and loading parameters
       LaikaHardwareInterface::Joint joint;
       joint.name = joint_info.name;
+      joint.joint_id = id;
+      id++;
       RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "[PARAM] Creating Joint '%s': ", joint.name.c_str());
       if (!joint_info.parameters.count("can_id")) {
         RCLCPP_FATAL(rclcpp::get_logger("LaikaHardwareInterface"), "[PARAM] Parameter can_id has to be specified!");
@@ -137,7 +140,7 @@ namespace laika_hardware_interface
       }
       bool finish = true;
       for (auto &joint : joints) {
-        if (joint.odrive_error == 0 && joint.position_state != 0) {
+        if (joint.odrive_error == 0 && joint.motor_position_state != 0) {
           joint.effort_command = 0.0;
           joint.ready = true;
           RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "[ACTIVATION] Motor with can-id '%d' for joint '%s' is ready!", joint.can_id, joint.name.c_str());
@@ -172,8 +175,18 @@ namespace laika_hardware_interface
       }
     }
     
-    // Request Torques and Encoder Estimates
     for (auto &joint : joints) {
+      // calculate joint states (applies gearbox ratios and leg kinematics)
+      joint.joint_position_state = joint.motor_position_state / 14;
+      joint.joint_velocity_state = joint.motor_velocity_state / 14;
+      joint.joint_effort_state = joint.motor_effort_state;
+      if (joint.name.find("knee") != std::string::npos) {
+        double knee_position = joints[joint.joint_id - 1].joint_position_state;
+        double knee_velocity = joints[joint.joint_id - 1].joint_velocity_state;
+        joint.joint_position_state += knee_position;
+        joint.joint_velocity_state += knee_velocity;
+      }
+      // Request Torques and Encoder Estimates
       Get_Torques_msg_t get_torques_msg;
       Get_Encoder_Estimates_msg_t get_encoder_estimages_msg;
       joint.send(get_torques_msg, true);
@@ -232,9 +245,9 @@ namespace laika_hardware_interface
   std::vector<hardware_interface::StateInterface> LaikaHardwareInterface::export_state_interfaces() {
     std::vector<hardware_interface::StateInterface> state_interfaces;
     for (auto &joint : joints) {
-      state_interfaces.emplace_back(joint.name, "position", &joint.position_state);
-      state_interfaces.emplace_back(joint.name, "velocity", &joint.velocity_state);
-      state_interfaces.emplace_back(joint.name, "effort", &joint.effort_state);
+      state_interfaces.emplace_back(joint.name, "position", &joint.joint_position_state);
+      state_interfaces.emplace_back(joint.name, "velocity", &joint.joint_velocity_state);
+      state_interfaces.emplace_back(joint.name, "effort", &joint.joint_effort_state);
     }
     return state_interfaces;
   }
@@ -284,11 +297,11 @@ namespace laika_hardware_interface
     Get_Encoder_Estimates_msg_t msg;
     msg.decode_buf(frame.data);
     if (name.find("hip") != std::string::npos) {
-      position_state = msg.Pos_Estimate * (2 * M_PI) / 14;
-      velocity_state = msg.Vel_Estimate * (2 * M_PI) / 14;
+      motor_position_state = msg.Pos_Estimate * (2 * M_PI);
+      motor_velocity_state = msg.Vel_Estimate * (2 * M_PI);
     } else {
-      position_state = msg.Pos_Estimate * (2 * M_PI);
-      velocity_state = msg.Vel_Estimate * (2 * M_PI);
+      motor_position_state = msg.Pos_Estimate * (2 * M_PI);
+      motor_velocity_state = msg.Vel_Estimate * (2 * M_PI);
     }
   }
   void LaikaHardwareInterface::Joint::on_torque_feedback(const can_frame& frame) {
@@ -298,8 +311,8 @@ namespace laika_hardware_interface
     }
     Get_Torques_msg_t msg;
     msg.decode_buf(frame.data);
-    effort_target = msg.Torque_Target;
-    effort_state = msg.Torque_Estimate;
+    motor_effort_target = msg.Torque_Target;
+    motor_effort_state = msg.Torque_Estimate;
   }
   void LaikaHardwareInterface::Joint::on_heartbeat(const can_frame& frame) {
     if (frame.can_dlc < Heartbeat_msg_t::msg_length) {

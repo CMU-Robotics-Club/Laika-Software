@@ -31,6 +31,7 @@ class LaikaHardwareInterface : public hardware_interface::SystemInterface
   struct Joint {
     // parameters
     std::string name;
+    uint8_t joint_id;
     uint8_t can_id;
     double motor_velocity_limit = std::numeric_limits<double>::quiet_NaN();
     double motor_current_limit = std::numeric_limits<double>::quiet_NaN();
@@ -41,10 +42,13 @@ class LaikaHardwareInterface : public hardware_interface::SystemInterface
     double previous_mode;
 
     // state variables
-    double position_state = 0.0;
-    double velocity_state = 0.0;
-    double effort_state = 0.0;
-    double effort_target = 0.0;
+    double motor_position_state = 0.0;
+    double motor_velocity_state = 0.0;
+    double motor_effort_state = 0.0;
+    double motor_effort_target = 0.0;
+    double joint_position_state = 0.0;
+    double joint_velocity_state = 0.0;
+    double joint_effort_state = 0.0;
 
     // other variables
     uint32_t odrive_error = 1;

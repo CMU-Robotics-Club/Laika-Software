@@ -21,7 +21,7 @@ def launch_setup(context, *args, **kwargs):
 
     world_file_path = PathJoinSubstitution([FindPackageShare('laika_sim'), 'config', 'world.sdf'])
     robot_description_file_path = os.path.join(get_package_share_directory('laika_description'), 'xacro', 'robot.xacro')
-    controller_config_path = os.path.join(get_package_share_directory('laika_pid_controller'), 'config', 'real_leg_pid_controller_config.yaml')
+    controller_config_path = os.path.join(get_package_share_directory('laika_pid_controller'), 'config', 'sim_leg_pid_controller_config.yaml')
 
     if (config == "flying_leg"):
         fly = 'true'
