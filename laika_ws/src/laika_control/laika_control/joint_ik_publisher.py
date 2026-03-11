@@ -139,7 +139,10 @@ class SetJointsIK(Node):
         self.upper_link_len = 0.35
         self.lower_link_len = 0.41
 
-        self.is_auto_mode = True
+        # Compensates for the built-in yaw rotation in leg_current.xacro
+        self.knee_yaw_offset: float = 0.04573
+
+        self.is_auto_mode = False
         self.step_size = 0.01 
         
         side_length = 0.2
@@ -182,9 +185,9 @@ class SetJointsIK(Node):
             self.manual_y = min(self.manual_y + self.step_size, self.max_y)
         elif char == 's':
             self.manual_y = max(self.manual_y - self.step_size, self.min_y)
-        elif char == 'a':
-            self.manual_x = max(self.manual_x - self.step_size, self.min_x)
         elif char == 'd':
+            self.manual_x = max(self.manual_x - self.step_size, self.min_x)
+        elif char == 'a':
             self.manual_x = min(self.manual_x + self.step_size, self.max_x)
 
     def publish_trajectory(self) -> None:
@@ -207,7 +210,9 @@ class SetJointsIK(Node):
             return
         
         knee_angle = math.pi - alpha2
-        
+        #apply the knee offset in the sim's xacro file
+        knee_angle = knee_angle - self.knee_yaw_offset
+
         msg = DynamicJointState()
         msg.header.stamp = self.get_clock().now().to_msg()
         msg.joint_names = self.dof_names

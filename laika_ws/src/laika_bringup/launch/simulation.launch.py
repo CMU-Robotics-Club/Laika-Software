@@ -87,13 +87,13 @@ def launch_setup(context, *args, **kwargs):
     )
 
     # Controller Manager (starts and loads hardware interface)
-    controller_manager = Node(
-        package="controller_manager",
-        executable="ros2_control_node",
-        parameters=[controller_config_path],
-        output="both",
-        arguments=["--ros-args", "--log-level", log_level]
-    )
+    # controller_manager = Node(
+    #     package="controller_manager",
+    #     executable="ros2_control_node",
+    #     parameters=[controller_config_path],
+    #     output="both",
+    #     arguments=["--ros-args", "--log-level", log_level]
+    # )
 
     # Joint State Broadcaster (publishes position, velocity and effort of each joint from the harware interface)
     joint_state_broadcaster_spawner = Node(
@@ -122,7 +122,7 @@ def launch_setup(context, *args, **kwargs):
         gz_bridge,
         gz_sim,
         robot_state_publisher,
-        controller_manager,
+        # controller_manager,
         gz_spawn_entity,
         RegisterEventHandler(
             event_handler=OnProcessExit(

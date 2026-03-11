@@ -183,8 +183,10 @@ namespace laika_hardware_interface
       if (joint.name.find("knee") != std::string::npos) {
         double knee_position = joints[joint.joint_id - 1].joint_position_state;
         double knee_velocity = joints[joint.joint_id - 1].joint_velocity_state;
-        joint.joint_position_state += knee_position;
-        joint.joint_velocity_state += knee_velocity;
+        joint.joint_position_state -= knee_position;
+        joint.joint_velocity_state -= knee_velocity;
+        joint.joint_position_state *= -1;
+        joint.joint_velocity_state *= -1;
       }
       // Request Torques and Encoder Estimates
       Get_Torques_msg_t get_torques_msg;
@@ -214,6 +216,12 @@ namespace laika_hardware_interface
       if ((int)joint.mode == Modes::TORQUE_CONTROL) {
         Set_Input_Torque_msg_t msg;
         msg.Input_Torque = joint.effort_command;
+        if (joint.name.find("knee") != std::string::npos) {
+          msg.Input_Torque *= -1;
+        }
+        float max_Torque = .3;
+        if (msg.Input_Torque > max_Torque) { msg.Input_Torque = max_Torque;}
+        if (msg.Input_Torque < -max_Torque) { msg.Input_Torque = -max_Torque;}
         joint.send(msg);
       }
     }

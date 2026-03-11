@@ -77,7 +77,7 @@
       <parent link="hip_link"/>
       <child link="upper_link"/>
       <axis xyz="0 0 -1"/>
-      <limit effort="1000" lower="0" upper="${pi/2}" velocity="100"/>
+      <limit effort="1000" lower="${-pi/4}" upper="${pi/2}" velocity="100"/>
       <dynamics damping="${hip_damping}" friction="${hip_friction}"/>
     </joint>
     <joint name="knee_joint" type="revolute">
