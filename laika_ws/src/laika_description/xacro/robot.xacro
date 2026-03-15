@@ -62,11 +62,11 @@
     <xacro:if value="$(arg leg_only)">
       <!-- simulation -->
       <xacro:if value="$(arg simulation)">
-        <xacro:include filename="$(find laika_description)/xacro/leg_gazebo.xacro"/>
+        <xacro:include filename="$(find laika_hardware_interface)/config/sim_leg_hardware_interface_config.xacro"/>
       </xacro:if>
       <!-- real -->
       <xacro:unless value="$(arg simulation)">
-        <xacro:include filename="$(find laika_description)/xacro/leg_ros2_control.xacro"/>
+        <xacro:include filename="$(find laika_hardware_interface)/config/real_leg_hardware_interface_config.xacro"/>
       </xacro:unless>
     </xacro:if>
 </robot>

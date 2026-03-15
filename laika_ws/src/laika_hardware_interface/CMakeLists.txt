@@ -45,4 +45,9 @@ install(TARGETS laika_hardware_interface EXPORT export_laika_hardware_interface)
 install(DIRECTORY hardware/include DESTINATION share/laika_hardware_interface)
 install(DIRECTORY odrive_base/include DESTINATION share/laika_hardware_interface)
 
+install(
+  DIRECTORY config
+  DESTINATION share/${PROJECT_NAME}/
+)
+
 ament_package()
