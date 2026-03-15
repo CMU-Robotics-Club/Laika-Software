@@ -35,6 +35,8 @@ class LaikaHardwareInterface : public hardware_interface::SystemInterface
     uint8_t can_id;
     double motor_velocity_limit = std::numeric_limits<double>::quiet_NaN();
     double motor_current_limit = std::numeric_limits<double>::quiet_NaN();
+    double torque_limit = std::numeric_limits<double>::quiet_NaN();
+    bool invert_direction = false;
 
     // command variables
     double effort_command = 0.0;
@@ -71,6 +73,8 @@ class LaikaHardwareInterface : public hardware_interface::SystemInterface
 
     // helper functions
     void clear_error();
+    std::string get_odrive_error_string(uint32_t error);
+    std::string get_odrive_state_string(uint8_t state);
     void request_encoder_feedback();
     void request_torques_feedback();
     void set_motor_limits();

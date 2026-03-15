@@ -14,6 +14,14 @@ def launch_setup(context, *args, **kwargs):
     print("log_level:           " + log_level)
     print("")
 
+    if log_level == "default":
+        important_log_level = "info";
+        other_log_level = "error";
+    else:
+        important_log_level = log_level;
+        other_log_level = log_level;
+
+
     robot_description_file_path = os.path.join(get_package_share_directory('laika_description'), 'xacro', 'robot.xacro')
     controller_config_path = os.path.join(get_package_share_directory('laika_pid_controller'), 'config', 'real_leg_pid_controller_config.yaml')
 
@@ -37,7 +45,7 @@ def launch_setup(context, *args, **kwargs):
                 'ignore_timestamp': True
             }
         ],
-        arguments=["--ros-args", "--log-level", log_level]
+        arguments=["--ros-args", "--log-level", other_log_level]
     )
 
     # Controller Manager (starts and loads hardware interface)
@@ -46,7 +54,7 @@ def launch_setup(context, *args, **kwargs):
         executable="ros2_control_node",
         parameters=[controller_config_path],
         output="both",
-        arguments=["--ros-args", "--log-level", log_level]
+        arguments=["--ros-args", "--log-level", important_log_level]
     )
 
     # Joint State Broadcaster (publishes position, velocity and effort of each joint from the harware interface)
@@ -54,7 +62,7 @@ def launch_setup(context, *args, **kwargs):
         package="controller_manager",
         executable="spawner",
         output="both",
-        arguments=["joint_state_broadcaster", "--param-file", controller_config_path, "--ros-args", "--log-level", log_level]
+        arguments=["joint_state_broadcaster", "--param-file", controller_config_path, "--ros-args", "--log-level", other_log_level]
     )
 
     # PID Controller Spawner (starts the custom controller)
@@ -62,7 +70,7 @@ def launch_setup(context, *args, **kwargs):
         package="controller_manager",
         executable="spawner",
         output="both",
-        arguments=["laika_pid_controller", "--param-file", controller_config_path, "--ros-args", "--log-level", log_level]
+        arguments=["laika_pid_controller", "--param-file", controller_config_path, "--ros-args", "--log-level", important_log_level]
     )
 
     return [
@@ -79,8 +87,8 @@ def generate_launch_description():
     launch_arguments.append(
             DeclareLaunchArgument(
                 'log_level',
-                default_value='error',
-                description='log_level [info, error, debug]'
+                default_value='default',
+                description='log_level [default, info, error, debug]'
                 )
             )
     return LaunchDescription(launch_arguments + [OpaqueFunction(function=launch_setup)])

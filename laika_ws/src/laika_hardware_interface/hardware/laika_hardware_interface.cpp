@@ -50,6 +50,12 @@ namespace laika_hardware_interface
       if (joint_info.parameters.count("motor_current_limit")) {
         joint.motor_current_limit = std::stod(joint_info.parameters.at("motor_current_limit"));
       }
+      if (joint_info.parameters.count("torque_limit")) {
+        joint.torque_limit = std::stod(joint_info.parameters.at("torque_limit"));
+      }
+      if (joint_info.parameters.count("invert_direction")) {
+        joint.invert_direction = (joint_info.parameters.at("invert_direction") == "true");
+      }
 
       // set initial mode
       joint.mode = Modes::TORQUE_CONTROL;
@@ -57,8 +63,10 @@ namespace laika_hardware_interface
       // print info
       RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "[PARAM]   can-id: %d", joint.can_id);
       RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "[PARAM]   mode: TORQUE_CONTROL");
-      RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "[PARAM]   velocity-limit: %.1f", joint.motor_velocity_limit);
-      RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "[PARAM]   current-limit: %.1f", joint.motor_current_limit);
+      RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "[PARAM]   invert-direction: %s", joint.invert_direction ? "true" : "false");
+      RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "[PARAM]   motor-velocity-limit: %.1f [rev/s]", joint.motor_velocity_limit);
+      RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "[PARAM]   motor-current-limit: %.1f [A]", joint.motor_current_limit);
+      RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "[PARAM]   torque-limit: %.1f [Nm]", joint.torque_limit);
       joints.push_back(joint);
     }
     return hardware_interface::CallbackReturn::SUCCESS;
@@ -185,6 +193,8 @@ namespace laika_hardware_interface
         double knee_velocity = joints[joint.joint_id - 1].joint_velocity_state;
         joint.joint_position_state -= knee_position;
         joint.joint_velocity_state -= knee_velocity;
+      }
+      if (joint.invert_direction) {
         joint.joint_position_state *= -1;
         joint.joint_velocity_state *= -1;
       }
@@ -216,12 +226,13 @@ namespace laika_hardware_interface
       if ((int)joint.mode == Modes::TORQUE_CONTROL) {
         Set_Input_Torque_msg_t msg;
         msg.Input_Torque = joint.effort_command;
-        if (joint.name.find("knee") != std::string::npos) {
+        if (joint.invert_direction) {
           msg.Input_Torque *= -1;
         }
-        float max_Torque = .3;
-        if (msg.Input_Torque > max_Torque) { msg.Input_Torque = max_Torque;}
-        if (msg.Input_Torque < -max_Torque) { msg.Input_Torque = -max_Torque;}
+        if (!std::isnan(joint.torque_limit) && joint.torque_limit != 0) {
+          if (msg.Input_Torque > joint.torque_limit) { msg.Input_Torque = joint.torque_limit;}
+          if (msg.Input_Torque < -joint.torque_limit) { msg.Input_Torque = -joint.torque_limit;}
+        }
         joint.send(msg);
       }
     }
@@ -335,7 +346,7 @@ namespace laika_hardware_interface
     odrive_trajectory_done = msg.Trajectory_Done_Flag;
     if (odrive_error != 0) {
       ready = false;
-      RCLCPP_ERROR(rclcpp::get_logger("LaikaHardwareInterface"), "Joint '%s' with can-id '%d' has error '%d' and state '%d'", name.c_str(), can_id, odrive_error, odrive_state);
+      RCLCPP_ERROR(rclcpp::get_logger("LaikaHardwareInterface"), "Joint '%s' with can-id '%d' has error '%s' and state '%s'", name.c_str(), can_id, get_odrive_error_string(odrive_error).c_str(), get_odrive_state_string(odrive_state).c_str());
     }
   }
   void LaikaHardwareInterface::Joint::on_version_msg(const can_frame& frame) {
@@ -350,6 +361,57 @@ namespace laika_hardware_interface
     Clear_Errors_msg_t msg;
     msg.Identify = 0;
     send(msg);
+  }
+  std::string LaikaHardwareInterface::Joint::get_odrive_state_string(uint8_t state) {
+    switch (state) {
+      case 0: return "UNDEFINED";
+      case 1: return "IDLE";
+      case 2: return "STARTUP_SEQUENCE";
+      case 3: return "FULL_CALIBRATION_SEQUENCE";
+      case 4: return "MOTOR_CALIBRATION";
+      case 6: return "ENCODER_INDEX_SEARCH";
+      case 7: return "ENCODER_OFFSET_CALIBRATION";
+      case 8: return "CLOSED_LOOP_CONTROL";
+      case 9: return "LOCKIN_SPIN";
+      case 10: return "ENCODER_DIR_FIND";
+      case 11: return "HOMING";
+      case 12: return "ENCODER_HALL_POLARITY_CALIBRATION";
+      case 13: return "ENCODER_HALL_PHASE_CALIBRATION";
+      case 14: return "ANTICOGGING_CALIBRATION";
+      default: return "UNKNOWN_STATE (" + std::to_string(state) + ")";
+    }
+  }
+  std::string LaikaHardwareInterface::Joint::get_odrive_error_string(uint32_t error) {
+    switch (error) {
+        case 0x00000000: return "ODRIVE_ERROR_NONE";
+        case 0x00000001: return "ODRIVE_ERROR_INITIALIZING";
+        case 0x00000002: return "ODRIVE_ERROR_SYSTEM_LEVEL";
+        case 0x00000004: return "ODRIVE_ERROR_TIMING_ERROR";
+        case 0x00000008: return "ODRIVE_ERROR_MISSING_ESTIMATE";
+        case 0x00000010: return "ODRIVE_ERROR_BAD_CONFIG";
+        case 0x00000020: return "ODRIVE_ERROR_DRV_FAULT";
+        case 0x00000040: return "ODRIVE_ERROR_MISSING_INPUT";
+        case 0x00000100: return "ODRIVE_ERROR_DC_BUS_OVER_VOLTAGE";
+        case 0x00000200: return "ODRIVE_ERROR_DC_BUS_UNDER_VOLTAGE";
+        case 0x00000400: return "ODRIVE_ERROR_DC_BUS_OVER_CURRENT";
+        case 0x00000800: return "ODRIVE_ERROR_DC_BUS_OVER_REGEN_CURRENT";
+        case 0x00001000: return "ODRIVE_ERROR_CURRENT_LIMIT_VIOLATION";
+        case 0x00002000: return "ODRIVE_ERROR_MOTOR_OVER_TEMP";
+        case 0x00004000: return "ODRIVE_ERROR_INVERTER_OVER_TEMP";
+        case 0x00008000: return "ODRIVE_ERROR_VELOCITY_LIMIT_VIOLATION";
+        case 0x00010000: return "ODRIVE_ERROR_POSITION_LIMIT_VIOLATION";
+        case 0x01000000: return "ODRIVE_ERROR_WATCHDOG_TIMER_EXPIRED";
+        case 0x02000000: return "ODRIVE_ERROR_ESTOP_REQUESTED";
+        case 0x04000000: return "ODRIVE_ERROR_SPINOUT_DETECTED";
+        case 0x08000000: return "ODRIVE_ERROR_BRAKE_RESISTOR_DISARMED";
+        case 0x10000000: return "ODRIVE_ERROR_THERMISTOR_DISCONNECTED";
+        case 0x40000000: return "ODRIVE_ERROR_CALIBRATION_ERROR";
+        default: {
+            std::stringstream ss;
+            ss << "UNKNOWN_ERROR_CODE (0x" << std::setfill('0') << std::setw(8) << std::hex << error << ")";
+            return ss.str();
+        }
+    }
   }
   void LaikaHardwareInterface::Joint::request_encoder_feedback() {
     Get_Encoder_Estimates_msg_t get_encoder_estimages_msg;
@@ -406,6 +468,8 @@ namespace laika_hardware_interface
     } else {
       msg.Current_Limit = std::numeric_limits<float>::infinity();
     }
+    // Set Hard Current Limit
+    write_parameter(306, (float)motor_current_limit);
     send(msg);
   }
   void LaikaHardwareInterface::Joint::set_mode() {
