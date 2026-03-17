@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <robot name="laika" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:arg name="config_yaml" default=""/>
   <ros2_control name="GazeboSystem" type="system">
     <hardware>
       <plugin>gz_ros2_control/GazeboSimSystem</plugin>
@@ -19,7 +20,7 @@
   </ros2_control>
   <gazebo>
     <plugin filename="libgz_ros2_control-system.so" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-      <parameters>$(find laika_pid_controller)/config/sim_leg_pid_controller_config.yaml</parameters>
+      <parameters>$(arg config_yaml)</parameters>
     </plugin>
   </gazebo>
 </robot>

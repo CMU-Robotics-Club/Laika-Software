@@ -27,6 +27,7 @@ setup(
             'joint_sin_publisher = laika_control.joint_sin_publisher:main',
             'joint_value_publisher = laika_control.joint_value_publisher:main',
             'joint_ik_publisher = laika_control.joint_ik_publisher:main',
+            'cartesian_pos_publisher = laika_control.cartesian_pos_publisher:main',
         ],
     },
 )

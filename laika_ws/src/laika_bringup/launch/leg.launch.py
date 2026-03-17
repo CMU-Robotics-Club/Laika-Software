@@ -9,9 +9,10 @@ import xacro
 def launch_setup(context, *args, **kwargs):
     log_level = context.launch_configurations['log_level']
     # config = context.launch_configurations['config']
-
+    controller_type = context.launch_configurations['controller_type']
     print("")
     print("log_level:           " + log_level)
+    print("controller_type:     " + controller_type)
     print("")
 
     if log_level == "default":
@@ -20,10 +21,19 @@ def launch_setup(context, *args, **kwargs):
     else:
         important_log_level = log_level;
         other_log_level = log_level;
-
-
+    
+    # Dynamically select the controller package, name, and config file
+    if controller_type == "impedance":
+        controller_pkg = 'laika_cartesian_impedance_controller'
+        controller_name = 'laika_cartesian_impedance_controller'
+        config_filename = 'real_leg_impedance_controller_config.yaml'
+    else:
+        controller_pkg = 'laika_pid_controller'
+        controller_name = 'laika_pid_controller'
+        config_filename = 'real_leg_pid_controller_config.yaml'
+    
     robot_description_file_path = os.path.join(get_package_share_directory('laika_description'), 'xacro', 'robot.xacro')
-    controller_config_path = os.path.join(get_package_share_directory('laika_pid_controller'), 'config', 'real_leg_pid_controller_config.yaml')
+    controller_config_path = os.path.join(get_package_share_directory(controller_pkg), 'config', config_filename)
 
     robot_description = xacro.process_file(robot_description_file_path, mappings={
         'fly': 'false',
@@ -72,12 +82,18 @@ def launch_setup(context, *args, **kwargs):
         output="both",
         arguments=["laika_pid_controller", "--param-file", controller_config_path, "--ros-args", "--log-level", important_log_level]
     )
-
+    # Spawns whichever controller name was dynamically selected above
+    custom_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        output="both",
+        arguments=[controller_name, "--param-file", controller_config_path, "--ros-args", "--log-level", important_log_level]
+    )
     return [
         robot_state_publisher,
         controller_manager,
         joint_state_broadcaster_spawner,
-        laika_pid_controller_spawner,
+        custom_controller_spawner,
     ]
 
 
@@ -89,6 +105,14 @@ def generate_launch_description():
                 'log_level',
                 default_value='default',
                 description='log_level [default, info, error, debug]'
+                )
+            )
+
+    launch_arguments.append(
+            DeclareLaunchArgument(
+                'controller_type',
+                default_value='pid',
+                description='Which controller to run: [pid, impedance]'
                 )
             )
     return LaunchDescription(launch_arguments + [OpaqueFunction(function=launch_setup)])
