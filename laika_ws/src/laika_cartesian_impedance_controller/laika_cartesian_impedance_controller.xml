@@ -1,0 +1,9 @@
+<library path="laika_cartesian_impedance_controller">
+  <class name="laika_cartesian_impedance_controller/LaikaCartesianImpedanceController"
+         type="laika_cartesian_impedance_controller::LaikaCartesianImpedanceController"
+         base_class_type="controller_interface::ControllerInterface">
+    <description>
+      Laika Cartesian Impedance Controller
+    </description>
+  </class>
+</library>

@@ -1,0 +1,26 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 1000  # Update rate in Hz
+
+    # Joint State Broadcaster (no configuration needed)
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    # Laika Cartesian Impedance Controller
+    laika_cartesian_impedance_controller:
+      type: laika_cartesian_impedance_controller/LaikaCartesianImpedanceController
+
+laika_cartesian_impedance_controller:
+  ros__parameters:
+    # Joints: specify names of joints to be controlled
+    joints:
+      - hip_joint
+      - knee_joint
+
+    # Cartesian space gains (XYZ)
+    stiffness: [4000.0, 4000.0, 150.0]
+    damping: [80.0, 80.0, 15.0]
+
+gz_ros_control:
+  ros__parameters:
+    hold_joints: false
