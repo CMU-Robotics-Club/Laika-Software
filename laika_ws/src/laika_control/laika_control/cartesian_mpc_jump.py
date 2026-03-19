@@ -4,7 +4,7 @@ import termios
 import tty
 import threading
 import math
-from typing import Tuple, Callable
+from typing import Tuple, Callable, Optional
 
 import rclpy
 from rclpy.node import Node
@@ -50,17 +50,14 @@ def get_jump_y(t_pred: float, t_curr: float) -> Tuple[float, float]:
 
     tr = vr / a_push
     t_flight = 2 * vr / g
-    t_land = tr + t_flight - .125
+    t_land = tr + t_flight - 0.125
     t_end = t_land + tr
 
     # 1. HORIZON MASKING: Blind the MPC during pushoff
     if 0 <= t_curr <= tr:
-        # We are actively pushing. Do not let the prediction see the tuck!
         y = hs + 0.5 * a_push * (t_pred**2)
         dy = a_push * t_pred
         
-        # Safety clamp: Ensure mathematical extrapolation doesn't exceed 
-        # the physical link lengths of the leg (L1+L2 = 0.76m)
         if y > 0.72: 
             y = 0.72
             
@@ -71,16 +68,13 @@ def get_jump_y(t_pred: float, t_curr: float) -> Tuple[float, float]:
         y = hr
         dy = 0.0
     elif t_pred <= t_land:
-        # Flight Phase: Tuck the leg for clearance
         y = hs
         dy = 0.0
     elif t_pred <= t_end:
-        # Landing Phase: Yield to the impact like a shock absorber
         dt = t_pred - t_land
         y = hr - vr * dt + 0.5 * a_push * (dt**2)
         dy = -vr + a_push * dt
     else:
-        # Done
         y = hs
         dy = 0.0
 
@@ -88,7 +82,7 @@ def get_jump_y(t_pred: float, t_curr: float) -> Tuple[float, float]:
 
 
 class LaikaMPC(Node):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__('laika_mpc_node')
         
         self.cmd_pub = self.create_publisher(Float64MultiArray, 'laika_cartesian_impedance_controller/command', 10)
@@ -104,7 +98,6 @@ class LaikaMPC(Node):
         self.dt = 0.025  
         self.secs_elapsed = 0.0
         
-        # Jump State Tracking
         self.jump_start_time = -999.0 
         
         self.current_state = np.zeros(4)
@@ -119,7 +112,6 @@ class LaikaMPC(Node):
             warm_start=True, verbose=False
         )
         
-        # Start the key logger
         self.key_logger = TerminalKeyLogger(self.handle_keypress)
         self.key_logger.start()
 
@@ -129,13 +121,11 @@ class LaikaMPC(Node):
         self.get_logger().info("Press SPACE to trigger the jump sequence!\n")
 
     def handle_keypress(self, key: str) -> None:
-        """Triggers the jump sequence if the spacebar is pressed."""
         if key == ' ':
-            # Only allow triggering if the previous jump is finished (roughly 1 second)
             if self.secs_elapsed - self.jump_start_time > 1.0:
                 self.jump_start_time = self.secs_elapsed
 
-    def setup_dynamics(self):
+    def setup_dynamics(self) -> None:
         self.Ad = np.array([
             [1.0, 0.0, self.dt, 0.0],
             [0.0, 1.0, 0.0, self.dt],
@@ -155,7 +145,7 @@ class LaikaMPC(Node):
             0.0, -self.g * self.dt
         ])
 
-    def setup_condensed_mpc(self):
+    def setup_condensed_mpc(self) -> None:
         n_x = 4
         n_u = 2
         
@@ -200,7 +190,7 @@ class LaikaMPC(Node):
         self.l_ineq = -500.0 * np.ones(n_u * self.N)
         self.u_ineq = 500.0 * np.ones(n_u * self.N)
 
-    def joint_callback(self, msg: JointState):
+    def joint_callback(self, msg: JointState) -> None:
         try:
             hip_idx = msg.name.index('hip_joint')
             knee_idx = msg.name.index('knee_joint')
@@ -228,24 +218,20 @@ class LaikaMPC(Node):
         self.current_state = np.array([x, y, dx, dy])
         self.state_received = True
 
-    def mpc_loop(self):
+    def mpc_loop(self) -> None:
         if not self.state_received:
             return
 
         x0 = self.current_state
         self.secs_elapsed += self.dt
 
-        # Build trajectory prediction N steps out
-        # Build trajectory prediction N steps out
         X_ref = np.zeros(4 * self.N)
         for i in range(self.N):
             pred_time = self.secs_elapsed + (i * self.dt)
             
-            # Calculate both the future time and the actual current time
             t_pred_jump = pred_time - self.jump_start_time
             t_curr_jump = self.secs_elapsed - self.jump_start_time
             
-            # Pass both to the masked trajectory generator
             tgt_y, tgt_dy = get_jump_y(t_pred_jump, t_curr_jump)
             X_ref[i*4 : i*4 + 4] = np.array([0.0, tgt_y, 0.0, tgt_dy])
 
@@ -263,6 +249,21 @@ class LaikaMPC(Node):
         Fx_ff = U_optimal[0]
         Fy_ff = U_optimal[1]
 
+        # --- FLIGHT PHASE FEED-FORWARD MASKING ---
+        t_curr_jump = self.secs_elapsed - self.jump_start_time
+        
+        hp, hr, hs, g_val = 0.70, 0.50, 0.25, 9.81
+        vr = math.sqrt(2 * g_val * (hp - hr))
+        a_push = g_val * (hp - hr) / (hr - hs)
+        tr = vr / a_push
+        t_flight = 2 * vr / g_val
+        t_land = tr + t_flight - 0.125
+        
+        if tr < t_curr_jump <= t_land:
+            Fx_ff = 0.0
+            Fy_ff = 0.0
+        # -----------------------------------------
+
         X_optimal = (self.A_bar @ x0) + (self.B_bar @ U_optimal) + self.G_bar
         x_tgt  = X_optimal[0]
         y_tgt  = X_optimal[1]
@@ -277,7 +278,7 @@ class LaikaMPC(Node):
         sys.stdout.write(f"\r[{mode_str}] FF -> Fx: {Fx_ff:+.1f} N | Fy: {Fy_ff:+.1f} N | Tgt Y: {y_tgt:+.3f} m      ")
         sys.stdout.flush()
 
-def main(args=None):
+def main(args: Optional[list] = None) -> None:
     rclpy.init(args=args)
     node = LaikaMPC()
     try:
