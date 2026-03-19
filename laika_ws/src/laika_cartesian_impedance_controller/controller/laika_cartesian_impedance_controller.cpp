@@ -111,8 +111,8 @@ controller_interface::return_type LaikaCartesianImpedanceController::update(cons
         x, y, x_ref_, y_ref_, fx_ff_, fy_ff_);
   }
 
-  hip.effort_command = tau_h / GEAR_RATIO;
-  knee.effort_command = tau_k / GEAR_RATIO;
+  hip.effort_command = tau_h;
+  knee.effort_command = tau_k;
 
   if (!command_interfaces_[hip.id].set_value(hip.effort_command)) {
     RCLCPP_WARN(rclcpp::get_logger("LaikaCartesianImpedanceController"), "Failed to set effort for %s", hip.name.c_str());

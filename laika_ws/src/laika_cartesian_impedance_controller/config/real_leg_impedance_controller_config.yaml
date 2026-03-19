@@ -18,5 +18,5 @@ laika_cartesian_impedance_controller:
       - knee_joint
 
     # Cartesian space gains (XYZ)
-    stiffness: [150.0, 150.0, 150.0]
-    damping: [15.0, 15.0, 15.0]
+    stiffness: [4000.0, 4000.0, 150.0]
+    damping: [100.0, 100.0, 15.0]

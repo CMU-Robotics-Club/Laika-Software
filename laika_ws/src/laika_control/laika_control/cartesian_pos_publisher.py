@@ -102,7 +102,7 @@ class CartesianCommandPublisher(Node):
         self.secs_elapsed = 0.0
         
         self.is_auto_mode = False
-        self.step_size = 0.01 
+        self.step_size = 0.001 
         
         # Define limits for the automated path bounding box
         side_length = 0.2
