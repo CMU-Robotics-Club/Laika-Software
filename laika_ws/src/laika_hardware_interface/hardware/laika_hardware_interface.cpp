@@ -191,8 +191,8 @@ namespace laika_hardware_interface
       if (joint.name.find("knee") != std::string::npos) {
         double knee_position = joints[joint.joint_id - 1].joint_position_state;
         double knee_velocity = joints[joint.joint_id - 1].joint_velocity_state;
-        joint.joint_position_state -= knee_position;
-        joint.joint_velocity_state -= knee_velocity;
+        joint.joint_position_state += knee_position;
+        joint.joint_velocity_state += knee_velocity;
       }
       if (joint.invert_direction) {
         joint.joint_position_state *= -1;

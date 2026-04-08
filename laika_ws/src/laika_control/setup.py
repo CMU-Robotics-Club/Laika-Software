@@ -29,6 +29,7 @@ setup(
             'joint_ik_publisher = laika_control.joint_ik_publisher:main',
             'cartesian_pos_publisher = laika_control.cartesian_pos_publisher:main',
             'cartesian_mpc_jump = laika_control.cartesian_mpc_jump:main',
+            'cartesian_simple_jump = laika_control.cartesian_simple_jump:main',
         ],
     },
 )

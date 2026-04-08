@@ -8,9 +8,9 @@
     <joint name="hip_joint">
       <param name="can_id">1</param>
       <param name="invert_direction">false</param>
-      <param name="torque_limit">0.5</param>
-      <param name="motor_current_limit">15</param>
-      <param name="motor_velocity_limit">15</param>
+      <param name="torque_limit">1.0</param>
+      <param name="motor_current_limit">100.0</param>
+      <param name="motor_velocity_limit">0</param>
       <command_interface name="effort" data_type="double"/>
       <state_interface name="position" data_type="double"/>
       <state_interface name="velocity" data_type="double"/>
@@ -18,10 +18,10 @@
     </joint>
     <joint name="knee_joint">
       <param name="can_id">2</param>
-      <param name="invert_direction">true</param>
-      <param name="torque_limit">0.5</param>
-      <param name="motor_current_limit">15</param>
-      <param name="motor_velocity_limit">15</param>
+      <param name="invert_direction">false</param>
+      <param name="torque_limit">0.3</param>
+      <param name="motor_current_limit">100.0</param>
+      <param name="motor_velocity_limit">0</param>
       <command_interface name="effort" data_type="double"/>
       <state_interface name="position" data_type="double"/>
       <state_interface name="velocity" data_type="double"/>
