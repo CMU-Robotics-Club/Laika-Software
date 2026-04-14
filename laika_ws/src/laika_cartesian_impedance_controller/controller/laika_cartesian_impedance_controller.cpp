@@ -107,8 +107,8 @@ controller_interface::return_type LaikaCartesianImpedanceController::update(cons
   static int print_counter = 0;
   if (++print_counter % 100 == 0) {
       RCLCPP_INFO(rclcpp::get_logger("LaikaCartesianImpedanceController"), 
-        "Foot Pos -> X: %.4f, Y: %.4f | Tgt -> X: %.4f, Y: %.4f | F_ff -> X: %.2f, Y: %.2f", 
-        x, y, x_ref_, y_ref_, fx_ff_, fy_ff_);
+        "Foot Pos -> X: %.4f, Y: %.4f | Tgt -> X: %.4f, Y: %.4f | F_ff -> X: %.2f, Y: %.2f | Tau -> H: %.2f, K: %.2f", 
+        x, y, x_ref_, y_ref_, fx_ff_, fy_ff_, tau_h, tau_k);
   }
 
   hip.effort_command = tau_h;

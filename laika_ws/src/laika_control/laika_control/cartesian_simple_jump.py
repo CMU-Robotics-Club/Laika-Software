@@ -117,9 +117,9 @@ class SimpleJumpController(Node):
         self.knee_offset = 0.04573
         
         # Physics / Robot Properties
-        self.m = 3.0
+        self.m = 5.0
         self.g = G_VAL    
-        self.ff_gravity = -(self.m * self.g) * 0.25 # Distribute weight across 4 legs
+        self.ff_gravity = -(self.m * self.g) * 0.4 
         
         # Timing Variables
         self.start_time_ns = self.get_clock().now().nanoseconds

@@ -35,7 +35,7 @@ A_PUSH = G_VAL * (H_PEAK - H_LAND) / (H_LAND - H_CROUCH)
 
 T_R = V_R / A_PUSH
 T_FLIGHT_TOTAL = 2 * V_R / G_VAL
-T_LAND = T_R + T_FLIGHT_TOTAL - 0.125
+T_LAND = T_R + T_FLIGHT_TOTAL - 0.0
 T_END = T_LAND + T_R
 # --------------------------------
 
@@ -116,7 +116,7 @@ class LaikaMPC(Node):
         self.l1 = 0.35
         self.l2 = 0.41
         self.knee_offset = 0.04573
-        self.m = 3.0
+        self.m = 5.0
         self.g = G_VAL    
 
         self.N = 25      
@@ -236,7 +236,7 @@ class LaikaMPC(Node):
         self.f_dummy = np.zeros(n_u * self.N)
         self.A_ineq = sparse.eye(n_u * self.N).tocsc()
         
-        self.l_ineq = -100.0 * np.ones(n_u * self.N)
+        self.l_ineq = -40.0 * np.ones(n_u * self.N)
         self.u_ineq = 40.0 * np.ones(n_u * self.N)
         
         # Unilateral Contact Constraint shifted by mg
@@ -273,7 +273,45 @@ class LaikaMPC(Node):
             self.state_received = True
             
         self.new_state_event.set()
+    
+    def _dispatch_command(self, x_tgt: float, y_tgt: float, dx_tgt: float, dy_tgt: float, 
+                          Fx_ff: float, Fy_ff: float, current_hz: float, x0: np.ndarray, log: bool = True) -> None:
+        """Publishes control targets to the lower-level PD controller and optionally logs telemetry."""
+        cmd_msg = Float64MultiArray()
+        cmd_msg.data = [float(x_tgt), float(y_tgt), float(dx_tgt), float(dy_tgt), float(Fx_ff), float(Fy_ff)]
+        self.cmd_pub.publish(cmd_msg)
 
+        if not log:
+            sys.stdout.write(f"\r[{self.state[:7]:<7}] {current_hz:5.0f} Hz | Fx: {Fx_ff:+.1f} N | Fy: {Fy_ff:+.1f} N | Tgt Y: {y_tgt:+.3f} m      ")
+            sys.stdout.flush()
+            return
+
+        # Calculate current ideal state just for accurate telemetry plotting
+        if self.state == 'STAND_UP':
+            t_stand = self.secs_elapsed - self.stand_start_time
+            s = min(max(t_stand / self.T_STAND, 0.0), 1.0)
+            y_ideal = self.stand_start_y + (-H_CROUCH - self.stand_start_y) * (3*s**2 - 2*s**3)
+            dy_ideal = (-H_CROUCH - self.stand_start_y) * (6*s - 6*s**2) / self.T_STAND if s < 1.0 else 0.0
+        elif self.state == 'JUMP':
+            y_ideal, dy_ideal = get_jump_y(self.secs_elapsed - self.jump_start_time, self.secs_elapsed - self.jump_start_time)
+        else: # IDLE
+            y_ideal, dy_ideal = -H_CROUCH, 0.0
+
+        self.log_buffer.append({
+            'time': float(self.secs_elapsed),
+            'loop_hz': float(current_hz),
+            'x_true': float(x0[0]), 'y_true': float(x0[1]),
+            'dx_true': float(x0[2]), 'dy_true': float(x0[3]),
+            'x_cmd': float(x_tgt), 'y_cmd': float(y_tgt),
+            'dx_cmd': float(dx_tgt), 'dy_cmd': float(dy_tgt),
+            'y_ideal': float(y_ideal), 'dy_ideal': float(dy_ideal),    
+            'fx_cmd': float(Fx_ff), 'fy_cmd': float(Fy_ff)
+        })
+
+        mode_str = f"{self.state[:7]:<7}"
+        sys.stdout.write(f"\r[{mode_str}] {current_hz:5.0f} Hz | Fx: {Fx_ff:+.1f} N | Fy: {Fy_ff:+.1f} N | Tgt Y: {y_tgt:+.3f} m      ")
+        sys.stdout.flush()
+    
     def continuous_mpc_loop(self) -> None:
         while rclpy.ok():
             if not self.new_state_event.wait(timeout=0.1):
@@ -294,16 +332,7 @@ class LaikaMPC(Node):
             # --- LIMP MODE ---
             # Bypass MPC entirely. Send current position as target to PD with 0.0 N feedforward
             if self.state == 'LIMP':
-                x_tgt, y_tgt = x0[0], x0[1]
-                dx_tgt, dy_tgt = 0.0, 0.0
-                Fx_ff, Fy_ff = 0.0, 0.0
-                
-                cmd_msg = Float64MultiArray()
-                cmd_msg.data = [float(x_tgt), float(y_tgt), float(dx_tgt), float(dy_tgt), float(Fx_ff), float(Fy_ff)]
-                self.cmd_pub.publish(cmd_msg)
-                
-                sys.stdout.write(f"\r[LIMP   ] {current_hz:5.0f} Hz | Fx: {Fx_ff:+.1f} N | Fy: {Fy_ff:+.1f} N | Tgt Y: {y_tgt:+.3f} m      ")
-                sys.stdout.flush()
+                self._dispatch_command(x0[0], x0[1], 0.0, 0.0, 0.0, 0.0, current_hz, x0, log=False)
                 continue
             
             # --- STATE TRANSITION CHECKS ---
@@ -311,6 +340,14 @@ class LaikaMPC(Node):
                 self.state = 'IDLE'
             if self.state == 'JUMP' and (self.secs_elapsed - self.jump_start_time) > self.jump_duration_secs:
                 self.state = 'IDLE'
+
+            # --- FLIGHT PHASE BYPASS ---
+            if self.state == 'JUMP':
+                t_curr_jump = self.secs_elapsed - self.jump_start_time
+                if T_R < t_curr_jump <= T_LAND:
+                    y_tgt, dy_tgt = get_jump_y(t_curr_jump, t_curr_jump)
+                    self._dispatch_command(0.0, y_tgt, 0.0, dy_tgt, 0.0, 0.0, current_hz, x0, log=True)
+                    continue
 
             # --- POPULATE MPC REFERENCE HORIZON ---
             X_ref = np.zeros(4 * self.N)
@@ -353,47 +390,18 @@ class LaikaMPC(Node):
             Fx_ff = U_optimal[0]
             Fy_ff = U_optimal[1] - (self.m * self.g) * .25
 
-            # Flight phase masking overrides the calculated force to exactly 0.0
-            if self.state == 'JUMP':
-                t_curr_jump = self.secs_elapsed - self.jump_start_time
-                if T_R < t_curr_jump <= T_LAND:
-                    Fx_ff = 0.0
-                    Fy_ff = 0.0
+            # Old masking behavior commented out for debugging reference
+            # if self.state == 'JUMP':
+            #     t_curr_jump = self.secs_elapsed - self.jump_start_time
+            #     if T_R < t_curr_jump <= T_LAND:
+            #         Fx_ff = 0.0
+            #         Fy_ff = 0.0
 
             # X_optimal predicts where the MPC expects the leg to be this cycle
             X_optimal = (self.A_bar @ x0) + (self.B_bar @ U_optimal) + self.G_bar
             x_tgt, y_tgt, dx_tgt, dy_tgt = X_optimal[0], X_optimal[1], X_optimal[2], X_optimal[3]
 
-            cmd_msg = Float64MultiArray()
-            cmd_msg.data = [float(x_tgt), float(y_tgt), float(dx_tgt), float(dy_tgt), float(Fx_ff), float(Fy_ff)]
-            self.cmd_pub.publish(cmd_msg)
-
-            # --- LOGGING ---
-            # Calculate current ideal state just for accurate telemetry plotting
-            if self.state == 'STAND_UP':
-                t_stand = self.secs_elapsed - self.stand_start_time
-                s = min(max(t_stand / self.T_STAND, 0.0), 1.0)
-                y_ideal = self.stand_start_y + (-H_CROUCH - self.stand_start_y) * (3*s**2 - 2*s**3)
-                dy_ideal = (-H_CROUCH - self.stand_start_y) * (6*s - 6*s**2) / self.T_STAND if s < 1.0 else 0.0
-            elif self.state == 'JUMP':
-                y_ideal, dy_ideal = get_jump_y(self.secs_elapsed - self.jump_start_time, self.secs_elapsed - self.jump_start_time)
-            else: # IDLE
-                y_ideal, dy_ideal = -H_CROUCH, 0.0
-
-            self.log_buffer.append({
-                'time': float(self.secs_elapsed),
-                'loop_hz': float(current_hz),
-                'x_true': float(x0[0]), 'y_true': float(x0[1]),
-                'dx_true': float(x0[2]), 'dy_true': float(x0[3]),
-                'x_cmd': float(x_tgt), 'y_cmd': float(y_tgt),
-                'dx_cmd': float(dx_tgt), 'dy_cmd': float(dy_tgt),
-                'y_ideal': float(y_ideal), 'dy_ideal': float(dy_ideal),    
-                'fx_cmd': float(Fx_ff), 'fy_cmd': float(Fy_ff)
-            })
-
-            mode_str = f"{self.state[:7]:<7}"
-            sys.stdout.write(f"\r[{mode_str}] {current_hz:5.0f} Hz | Fx: {Fx_ff:+.1f} N | Fy: {Fy_ff:+.1f} N | Tgt Y: {y_tgt:+.3f} m      ")
-            sys.stdout.flush()
+            self._dispatch_command(x_tgt, y_tgt, dx_tgt, dy_tgt, Fx_ff, Fy_ff, current_hz, x0, log=True)
 
     def export_and_plot_telemetry(self) -> None:
         if not self.log_buffer:
