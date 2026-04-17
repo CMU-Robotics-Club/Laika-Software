@@ -57,7 +57,7 @@ class LaikaHardwareInterface : public hardware_interface::SystemInterface
     double joint_velocity_state_odrive = 0.0;
     // These are only used for knee joint:
     double joint_position_state_encoder = 0.0;
-    double joint_position_velocity_encoder = 0.0;
+    double joint_velocity_state_encoder = 0.0;
 
     // other variables
     uint32_t odrive_error = 1;
