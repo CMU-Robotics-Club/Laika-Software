@@ -301,7 +301,7 @@ namespace laika_hardware_interface
     }
 
     // PAST THIS POINT, WE KNOW THE MESSAGE IS BY THE TEENSY ENCODER
-    if (frame.can_id == 0){
+    if (frame.can_id == 0x80){
       if (frame.can_dlc != 8){
         RCLCPP_ERROR(rclcpp::get_logger("LaikaHardwareInterface"), "Not correct num bytes: %d", frame.can_dlc);     
         return;
