@@ -319,8 +319,8 @@ namespace laika_hardware_interface
       std::memcpy(&pos, frame.data, sizeof(float));
       std::memcpy(&vel, frame.data + sizeof(float), sizeof(float));
     
-      RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "CANID msg %f", pos);
-      RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "CANID msg %f", vel);
+      // RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "CANID msg %f", pos);
+      // RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "CANID msg %f", vel);
   
       Joint *knee = NULL;
       for(auto &joint : joints){
