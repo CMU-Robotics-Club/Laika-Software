@@ -19,7 +19,7 @@ namespace laika_hardware_interface
     can_interface_name_ = info_.hardware_parameters["can_interface_name"];
     RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "[PARAM] CAN inteface: %s", can_interface_name_.c_str());
 
-    // load joints 
+    // load  
     uint8_t id = 0;
     for (const hardware_interface::ComponentInfo & joint_info : info_.joints)
     {
@@ -185,19 +185,30 @@ namespace laika_hardware_interface
     
     for (auto &joint : joints) {
       // calculate joint states (applies gearbox ratios and leg kinematics)
-      joint.joint_position_state = joint.motor_position_state / 14;
-      joint.joint_velocity_state = joint.motor_velocity_state / 14;
+      joint.joint_position_state_odrive = joint.motor_position_state / 14;
+      joint.joint_velocity_state_odrive = joint.motor_velocity_state / 14;
       joint.joint_effort_state = joint.motor_effort_state;
       if (joint.name.find("knee") != std::string::npos) {
-        double knee_position = joints[joint.joint_id - 1].joint_position_state;
-        double knee_velocity = joints[joint.joint_id - 1].joint_velocity_state;
-        joint.joint_position_state += knee_position;
-        joint.joint_velocity_state += knee_velocity;
+        double knee_position = joints[joint.joint_id - 1].joint_position_state_odrive;
+        double knee_velocity = joints[joint.joint_id - 1].joint_velocity_state_odrive;
+        joint.joint_position_state_odrive += knee_position;
+        joint.joint_velocity_state_odrive += knee_velocity;
       }
       if (joint.invert_direction) {
-        joint.joint_position_state *= -1;
-        joint.joint_velocity_state *= -1;
+        joint.joint_position_state_odrive *= -1;
+        joint.joint_velocity_state_odrive *= -1;
       }
+
+      // Only update the joint position for the hip, since for knee we have separate encoder
+      if(joint.name.find("hip") != std::string::npos){
+        joint.joint_position_state = joint.joint_position_state_odrive;
+        joint.joint_velocity_state = joint.joint_velocity_state_odrive;
+      }
+      else{
+        joint.joint_position_state = joint.joint_position_state_encoder;
+        joint.joint_velocity_state = joint.joint_velocity_state_encoder;
+      }
+        
       // Request Torques and Encoder Estimates
       Get_Torques_msg_t get_torques_msg;
       Get_Encoder_Estimates_msg_t get_encoder_estimages_msg;
@@ -285,7 +296,48 @@ namespace laika_hardware_interface
     for (auto& joint : joints) {
       if ((frame.can_id >> 5) == joint.can_id) {
         joint.on_can_msg(frame);
+        return;
       }
+    }
+
+    // PAST THIS POINT, WE KNOW THE MESSAGE IS BY THE TEENSY ENCODER
+    if (frame.can_id == 0){
+      if (frame.can_dlc != 8){
+        RCLCPP_ERROR(rclcpp::get_logger("LaikaHardwareInterface"), "Not correct num bytes: %d", frame.can_dlc);     
+        return;
+      }
+      float pos = 0.0f;
+      float vel = 0.0f;
+
+      // RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "CANID THING %d", frame.can_id);
+      // RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "CANID msg %hhu", frame.data[0]);
+      // RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "CANID msg %hhu", frame.data[1]);
+      // RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "CANID msg %hhu", frame.data[2]);
+      // RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "CANID msg %hhu", frame.data[3]);
+
+      // converting frame data to the pos and vel
+      std::memcpy(&pos, frame.data, sizeof(float));
+      std::memcpy(&vel, frame.data + sizeof(float), sizeof(float));
+    
+      RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "CANID msg %f", pos);
+      RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "CANID msg %f", vel);
+  
+      Joint *knee = NULL;
+      for(auto &joint : joints){
+        if(joint.name.find("knee") != std::string::npos){
+          knee = &joint;
+          break;
+        }
+      }
+      if(knee == NULL) RCLCPP_ERROR(rclcpp::get_logger("LaikaHardwareInterface"), "Knee joint not found");
+      else {
+        // TODO: Calibrate this to use the correct offset and radians, or do it on the teensy
+        knee->joint_position_state_encoder = pos;
+        knee->joint_velocity_state_encoder = vel;
+      }
+    }
+    else{
+      RCLCPP_ERROR(rclcpp::get_logger("LaikaHardwareInterface"), "unrecognized can id: %d", frame.can_id);     
     }
   }
   void LaikaHardwareInterface::Joint::on_can_msg(const can_frame& frame) {
@@ -316,6 +368,7 @@ namespace laika_hardware_interface
     Get_Encoder_Estimates_msg_t msg;
     msg.decode_buf(frame.data);
     if (name.find("hip") != std::string::npos) {
+      // This for the hip
       motor_position_state = msg.Pos_Estimate * (2 * M_PI);
       motor_velocity_state = msg.Vel_Estimate * (2 * M_PI);
     } else {
