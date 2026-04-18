@@ -197,6 +197,9 @@ namespace laika_hardware_interface
       if (joint.invert_direction) {
         joint.joint_position_state_odrive *= -1;
         joint.joint_velocity_state_odrive *= -1;
+        // External positions are positive when going out, so we don't inver them
+        // joint.joint_position_state_encoder *= -1;
+        // joint.joint_velocity_state_encoder *= -1;
       }
 
       // Only update the joint position for the hip, since for knee we have separate encoder
@@ -207,6 +210,8 @@ namespace laika_hardware_interface
       else{
         joint.joint_position_state = joint.joint_position_state_encoder;
         joint.joint_velocity_state = joint.joint_velocity_state_encoder;
+        RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "CANID msg %f", joint.joint_position_state);
+        RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "CANID msg %f", joint.joint_velocity_state);
       }
         
       // Request Torques and Encoder Estimates
