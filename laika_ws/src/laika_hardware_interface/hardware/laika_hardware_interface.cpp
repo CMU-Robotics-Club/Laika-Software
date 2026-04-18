@@ -210,8 +210,6 @@ namespace laika_hardware_interface
       else{
         joint.joint_position_state = joint.joint_position_state_encoder;
         joint.joint_velocity_state = joint.joint_velocity_state_encoder;
-        RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "CANID msg %f", joint.joint_position_state);
-        RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "CANID msg %f", joint.joint_velocity_state);
       }
         
       // Request Torques and Encoder Estimates
@@ -249,6 +247,7 @@ namespace laika_hardware_interface
           if (msg.Input_Torque > joint.torque_limit) { msg.Input_Torque = joint.torque_limit;}
           if (msg.Input_Torque < -joint.torque_limit) { msg.Input_Torque = -joint.torque_limit;}
         }
+        RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "torque%f", msg.Input_Torque);
         joint.send(msg);
       }
     }
