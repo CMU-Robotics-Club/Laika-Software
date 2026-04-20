@@ -1,0 +1,29 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 1000  # Update rate in Hz
+
+    # Joint State Broadcaster (no configuration needed)
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    # Laika PID Controller
+    laika_simple_pid_controller:
+      type: laika_simple_pid_controller/LaikaSimplePidController
+
+laika_simple_pid_controller:
+  ros__parameters:
+    # Joints: specify names of joints to be controlled
+    joints:
+      - hip_joint
+      - knee_joint
+
+    # Gains for position and velocity pid controllers
+    gains:
+      hip_joint: {
+        "position_p": 60.0, "position_i": 0.0, "position_d": 0.0, "position_output_min:": -.inf, "position_output_max:": .inf,
+        # "velocity_p": 0.6, "velocity_i": 0.0, "velocity_d": 0.0, "velocity_output_min:": -.inf, "velocity_output_max:": .inf,
+      }
+      knee_joint: {
+        "position_p": 60.0, "position_i": 0.0, "position_d": 0.0, "position_output_min:": -.inf, "position_output_max:": .inf,
+        # "velocity_p": 0.6, "velocity_i": 0.0, "velocity_d": 0.0, "velocity_output_min:": -.inf, "velocity_output_max:": .inf,
+      }

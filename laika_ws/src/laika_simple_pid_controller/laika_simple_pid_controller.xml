@@ -1,0 +1,9 @@
+<library path="laika_simple_pid_controller">
+  <class name="laika_simple_pid_controller/LaikaSimplePidController"
+         type="laika_simple_pid_controller::LaikaSimplePidController"
+         base_class_type="controller_interface::ControllerInterface">
+    <description>
+      Laika PID Controller
+    </description>
+  </class>
+</library>

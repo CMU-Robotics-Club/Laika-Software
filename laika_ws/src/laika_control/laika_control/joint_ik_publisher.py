@@ -127,6 +127,7 @@ class SetJointsIK(Node):
         self.publisher = self.create_publisher(
             DynamicJointState, 
             'laika_pid_controller/command', 
+            # 'laika_simple_pid_controller/command', 
             10
         )
         

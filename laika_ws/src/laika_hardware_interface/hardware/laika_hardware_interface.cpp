@@ -247,7 +247,7 @@ namespace laika_hardware_interface
           if (msg.Input_Torque > joint.torque_limit) { msg.Input_Torque = joint.torque_limit;}
           if (msg.Input_Torque < -joint.torque_limit) { msg.Input_Torque = -joint.torque_limit;}
         }
-        RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "torque%f", msg.Input_Torque);
+        // RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "torque%f", msg.Input_Torque);
         joint.send(msg);
       }
     }

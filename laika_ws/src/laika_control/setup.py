@@ -24,6 +24,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'simple_joint_sin_publisher = laika_control.simple_joint_sin_publisher:main',
             'joint_sin_publisher = laika_control.joint_sin_publisher:main',
             'joint_value_publisher = laika_control.joint_value_publisher:main',
             'joint_ik_publisher = laika_control.joint_ik_publisher:main',
