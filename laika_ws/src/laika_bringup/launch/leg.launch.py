@@ -27,6 +27,10 @@ def launch_setup(context, *args, **kwargs):
         controller_pkg = 'laika_cartesian_impedance_controller'
         controller_name = 'laika_cartesian_impedance_controller'
         config_filename = 'real_leg_impedance_controller_config.yaml'
+    elif controller_type == "simple_pid":
+        controller_pkg = 'laika_simple_pid_controller'
+        controller_name = 'laika_simple_pid_controller'
+        config_filename = 'real_leg_pid_controller_config.yaml'
     else:
         controller_pkg = 'laika_pid_controller'
         controller_name = 'laika_pid_controller'
@@ -112,7 +116,7 @@ def generate_launch_description():
             DeclareLaunchArgument(
                 'controller_type',
                 default_value='pid',
-                description='Which controller to run: [pid, impedance]'
+                description='Which controller to run: [pid, simple_pid, impedance]'
                 )
             )
     return LaunchDescription(launch_arguments + [OpaqueFunction(function=launch_setup)])
