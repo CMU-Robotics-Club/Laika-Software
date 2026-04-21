@@ -157,6 +157,22 @@ namespace laika_hardware_interface
           finish = false;
         }
       }
+      if(finish){
+        // Joints fully initialized, now calulcating encoder offset
+        for(auto &joint : joints) {
+          if(joint.name.find("knee") != std::string::npos){
+            // Knee joint
+            if(joint.joint_position_state_encoder != 0.0){
+              // Encoder is initialized since encoder isn't the placeholder
+              joint.initial_offset = joint.joint_position_state_odrive - joint.joint_position_state_encoder;
+              finish=true;
+              break;
+            }
+            finish=false;
+            break;
+          }
+        }
+      }
       if (finish) {
         RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "[ACTIVATION] Hardware succesfully activated!");
         break;
@@ -189,9 +205,10 @@ namespace laika_hardware_interface
       joint.joint_velocity_state_odrive = joint.motor_velocity_state / 14;
       joint.joint_effort_state = joint.motor_effort_state;
       if (joint.name.find("knee") != std::string::npos) {
+        // Knee joint
         double knee_position = joints[joint.joint_id - 1].joint_position_state_odrive;
         double knee_velocity = joints[joint.joint_id - 1].joint_velocity_state_odrive;
-        joint.joint_position_state_odrive += knee_position;
+        joint.joint_position_state_odrive += knee_position - joint.initial_offset;
         joint.joint_velocity_state_odrive += knee_velocity;
       }
       if (joint.invert_direction) {
@@ -208,8 +225,23 @@ namespace laika_hardware_interface
         joint.joint_velocity_state = joint.joint_velocity_state_odrive;
       }
       else{
-        joint.joint_position_state = joint.joint_position_state_encoder;
-        joint.joint_velocity_state = joint.joint_velocity_state_encoder;
+        // This is the knee
+        double diff = joint.joint_position_state_odrive - joint.joint_position_state_encoder;
+        double backlash = 0.064; // THIS IS A TUNABLE PARAM, 0.034 rad=2deg
+        if(std::abs(diff) < backlash) joint.joint_position_state = joint.joint_position_state_odrive;
+        else if(diff <= 0) joint.joint_position_state = joint.joint_position_state_encoder - backlash;
+        else joint.joint_position_state = joint.joint_position_state_encoder + backlash;
+
+        joint.joint_velocity_state = joint.joint_velocity_state_odrive;
+
+        RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "Motor pos: %f", joint.joint_position_state_odrive);
+        RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "Encoder pos: %f", joint.joint_position_state_encoder);
+        RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "Diff: %f", diff);
+        RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "Pos: %f", joint.joint_position_state);
+
+        // Old code:
+        // joint.joint_position_state = joint.joint_position_state_encoder;
+        // joint.joint_velocity_state = joint.joint_velocity_state_encoder;
       }
         
       // Request Torques and Encoder Estimates
@@ -247,8 +279,11 @@ namespace laika_hardware_interface
           if (msg.Input_Torque > joint.torque_limit) { msg.Input_Torque = joint.torque_limit;}
           if (msg.Input_Torque < -joint.torque_limit) { msg.Input_Torque = -joint.torque_limit;}
         }
-        // RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "torque%f", msg.Input_Torque);
-        joint.send(msg);
+        if(joint.name.find("knee") != std::string::npos){
+          RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "torque%f", msg.Input_Torque);
+        }
+        // TODO: UNCOMMENT
+        // joint.send(msg);
       }
     }
     return hardware_interface::return_type::OK;
