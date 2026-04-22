@@ -227,7 +227,8 @@ namespace laika_hardware_interface
       else{
         // This is the knee
         double diff = joint.joint_position_state_odrive - joint.joint_position_state_encoder;
-        double backlash = 0.064; // THIS IS A TUNABLE PARAM, 0.034 rad=2deg
+        // double backlash = 0.064; // THIS IS A TUNABLE PARAM, 0.034 rad=2deg
+        double backlash = 0.124; // THIS IS A TUNABLE PARAM, 0.034 rad=2deg
         if(std::abs(diff) < backlash) joint.joint_position_state = joint.joint_position_state_odrive;
         else if(diff <= 0) joint.joint_position_state = joint.joint_position_state_encoder - backlash;
         else joint.joint_position_state = joint.joint_position_state_encoder + backlash;

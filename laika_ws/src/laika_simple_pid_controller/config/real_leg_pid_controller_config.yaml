@@ -20,10 +20,10 @@ laika_simple_pid_controller:
     # Gains for position and velocity pid controllers
     gains:
       hip_joint: {
-        "position_p": 0.13, "position_i": 0.0, "position_d": 0.0, "position_output_min": -.inf, "position_output_max": .inf,
+        "position_p": 0.2, "position_i": 0.0, "position_d": 0.0, "position_output_min": -.inf, "position_output_max": .inf,
         # "velocity_p": 0.6, "velocity_i": 0.0, "velocity_d": 0.0, "velocity_output_min:": -.inf, "velocity_output_max:": .inf,
       }
       knee_joint: {
-        "position_p": 0.13, "position_i": 0.0, "position_d": 0.0, "position_output_min": -.inf, "position_output_max": .inf,
+        "position_p": 0.2, "position_i": 0.0, "position_d": 0.0, "position_output_min": -.inf, "position_output_max": .inf,
         # "velocity_p": 0.6, "velocity_i": 0.0, "velocity_d": 0.0, "velocity_output_min:": -.inf, "velocity_output_max:": .inf,
       }
