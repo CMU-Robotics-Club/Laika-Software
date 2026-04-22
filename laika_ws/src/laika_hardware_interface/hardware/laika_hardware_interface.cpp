@@ -235,10 +235,10 @@ namespace laika_hardware_interface
 
         joint.joint_velocity_state = joint.joint_velocity_state_odrive;
 
-        RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "Motor pos: %f", joint.joint_position_state_odrive);
-        RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "Encoder pos: %f", joint.joint_position_state_encoder);
-        RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "Diff: %f", diff);
-        RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "Pos: %f", joint.joint_position_state);
+        // RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "Motor pos: %f", joint.joint_position_state_odrive);
+        // RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "Encoder pos: %f", joint.joint_position_state_encoder);
+        // RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "Diff: %f", diff);
+        // RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "Pos: %f", joint.joint_position_state);
 
         // Old code:
         // joint.joint_position_state = joint.joint_position_state_encoder;
@@ -281,7 +281,7 @@ namespace laika_hardware_interface
           if (msg.Input_Torque < -joint.torque_limit) { msg.Input_Torque = -joint.torque_limit;}
         }
         if(joint.name.find("knee") != std::string::npos){
-          RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "torque%f", msg.Input_Torque);
+          // RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "torque%f", msg.Input_Torque);
         }
         // TODO: UNCOMMENT
         joint.send(msg);
