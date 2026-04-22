@@ -283,7 +283,7 @@ namespace laika_hardware_interface
           RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "torque%f", msg.Input_Torque);
         }
         // TODO: UNCOMMENT
-        // joint.send(msg);
+        joint.send(msg);
       }
     }
     return hardware_interface::return_type::OK;
