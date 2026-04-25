@@ -119,7 +119,7 @@ class SimpleJumpController(Node):
         # Physics / Robot Properties
         self.m = 5.0
         self.g = G_VAL    
-        self.ff_gravity = -(self.m * self.g) * 0.4 
+        self.ff_gravity = -(self.m * self.g) * 0.2 
         
         # Timing Variables
         self.start_time_ns = self.get_clock().now().nanoseconds
@@ -241,6 +241,8 @@ class SimpleJumpController(Node):
             with self.state_lock:
                 x0 = self.current_state.copy()
 
+            real_x, real_y, real_dx, real_dy = x0
+
             # --- STATE TRANSITION CHECKS ---
             if self.state == 'STAND_UP' and (self.secs_elapsed - self.stand_start_time) >= self.T_STAND:
                 self.state = 'IDLE'
@@ -248,7 +250,8 @@ class SimpleJumpController(Node):
                 self.state = 'IDLE'
 
             # --- KINEMATIC TARGET GENERATION ---
-            x_tgt, dx_tgt, Fx_ff = 0.0, 0.0, 0.0
+            x_tgt, dx_tgt, Fx_ff = -0.1, 0.0, 0.0
+
             
             if self.state == 'LIMP':
                 # Track current position exactly with 0 feedforward
@@ -261,11 +264,14 @@ class SimpleJumpController(Node):
                 y_tgt = self.stand_start_y + (-H_CROUCH - self.stand_start_y) * (3*s**2 - 2*s**3)
                 dy_tgt = (-H_CROUCH - self.stand_start_y) * (6*s - 6*s**2) / self.T_STAND if s < 1.0 else 0.0
                 Fy_ff = self.ff_gravity
+                Fx_ff = (Fy_ff*real_x)/real_y * 20000
+                
                 
             elif self.state == 'IDLE':
                 y_tgt, dy_tgt = -H_CROUCH, 0.0
-                Fy_ff = self.ff_gravity
-                
+                Fy_ff = self.ff_gravity 
+                Fx_ff = (Fy_ff*real_x)/real_y * 20000
+
             elif self.state == 'JUMP':
                 t_curr = self.secs_elapsed - self.jump_start_time
                 y_tgt, dy_tgt = get_jump_y(t_curr, t_curr)

@@ -4,9 +4,9 @@ laika_cartesian_impedance_controller:
     description: "Names of the joints to be controlled."
   stiffness:
     type: double_array
-    default_value: [150.0, 150.0, 150.0]
+    default_value: [0.0, 0.0, 0]
     description: "Cartesian stiffness gains [X, Y, Z]"
   damping:
     type: double_array
-    default_value: [15.0, 15.0, 15.0]
+    default_value: [0.0, 0.0, 0]
     description: "Cartesian damping gains [X, Y, Z]"
