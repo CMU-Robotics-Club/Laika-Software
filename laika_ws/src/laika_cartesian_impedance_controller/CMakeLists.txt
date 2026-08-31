@@ -54,7 +54,7 @@ install(DIRECTORY controller/include DESTINATION share/laika_cartesian_impedance
 
 ######### Install
 install(
-  DIRECTORY launch config
+  DIRECTORY config
   DESTINATION share/${PROJECT_NAME}/
 )
 

@@ -101,6 +101,8 @@ class CartesianCommandPublisher(Node):
         self.timer = self.create_timer(self.secs_per_pub, self.publish_trajectory)
         self.secs_elapsed = 0.0
         
+        self.max_vel = 0.5
+        
         self.is_auto_mode = False
         self.step_size = 0.001 
         
@@ -156,15 +158,25 @@ class CartesianCommandPublisher(Node):
         else:
             x, y = self.manual_x, self.manual_y
 
-        # Clamp the coordinates to prevent pushing the leg too far physically
+        # Clamp the coordinates to prevent pushing the leg too fast
         x = max(self.min_x, min(x, self.max_x))
         y = max(self.min_y, min(y, self.max_y))
 
-        # Calculate finite-difference velocities
-        dx = (x - self.prev_x) / self.secs_per_pub
-        dy = (y - self.prev_y) / self.secs_per_pub
+        raw_dx = (x - self.prev_x) / self.secs_per_pub
+        raw_dy = (y - self.prev_y) / self.secs_per_pub
 
-        # Update previous values for the next tick
+        if abs(raw_dx) > self.max_vel:
+            dx = math.copysign(self.max_vel, raw_dx)
+            x = self.prev_x + dx * self.secs_per_pub
+        else:
+            dx = raw_dx
+            
+        if abs(raw_dy) > self.max_vel:
+            dy = math.copysign(self.max_vel, raw_dy)
+            y = self.prev_y + dy * self.secs_per_pub
+        else:
+            dy = raw_dy
+
         self.prev_x = x
         self.prev_y = y
 
