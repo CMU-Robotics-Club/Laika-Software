@@ -2,6 +2,8 @@
 # THIS STUFF IS USING THE MODEL MADE FROM ISAAC LAB.
 import threading
 from typing import Optional
+import os
+from ament_index_python.packages import get_package_share_directory
 
 import numpy as np
 import torch
@@ -156,8 +158,14 @@ def main(args: Optional[list] = None) -> None:
 
     rclpy.init(args=args)
 
+    default_policy = os.path.join(
+        get_package_share_directory('laika_control'),
+        'policies',
+        'policy.pt'
+    )
+
     parser = argparse.ArgumentParser()
-    parser.add_argument("--policy", help="Path to exported policy.pt", default="/home/quads/laika/Laika-Software/laika_ws/src/laika_control/laika_control/policies/policy.pt")
+    parser.add_argument("--policy", help="Path to exported policy.pt", default=default_policy)
     parsed, _ = parser.parse_known_args()
 
     node = RLPolicyNode(parsed.policy)
