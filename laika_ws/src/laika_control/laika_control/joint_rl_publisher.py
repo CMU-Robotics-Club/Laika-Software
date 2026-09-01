@@ -161,7 +161,8 @@ def main(args: Optional[list] = None) -> None:
     default_policy = os.path.join(
         get_package_share_directory('laika_control'),
         'policies',
-        'policy.pt'
+        # 'policy.pt'
+        'maybe_better_policy.pt'
     )
 
     parser = argparse.ArgumentParser()
