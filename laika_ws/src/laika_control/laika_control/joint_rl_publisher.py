@@ -162,7 +162,9 @@ def main(args: Optional[list] = None) -> None:
         get_package_share_directory('laika_control'),
         'policies',
         # 'policy.pt'
-        'maybe_better_policy.pt'
+        # 'maybe_better_policy.pt'
+        # 'policy_with_pd_delay.pt'
+        'policy_with_pd_delay_moreiter.pt'
     )
 
     parser = argparse.ArgumentParser()

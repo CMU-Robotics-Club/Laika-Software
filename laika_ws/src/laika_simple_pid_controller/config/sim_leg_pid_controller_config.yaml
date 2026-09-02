@@ -20,14 +20,14 @@ laika_simple_pid_controller:
     # Gains for position and velocity pid controllers
     gains:
       hip_joint: {
-        # "position_p": 100.0, "position_i": 0.0, "position_d": 0.0, "position_output_min:": -.inf, "position_output_max:": .inf,
-        "position_p": 13.4, "position_i": 0.0, "position_d": 0.898, "position_output_min:": -94.2, "position_output_max:": 94.2,
-        # "velocity_p": 0.4, "velocity_i": 0.0, "velocity_d": 0.0, "velocity_output_min:": -.inf, "velocity_output_max:": .inf,
+        # "position_p": 100.0, "position_i": 0.0, "position_d": 0.0, "position_output_min": -.inf, "position_output_max": .inf,
+        "position_p": 13.4, "position_i": 0.0, "position_d": 0.898, "position_output_min": -94.2, "position_output_max": 94.2,
+        # "velocity_p": 0.4, "velocity_i": 0.0, "velocity_d": 0.0, "velocity_output_min": -.inf, "velocity_output_max": .inf,
       }
       knee_joint: {
-        # "position_p": 40.0, "position_i": 0.0, "position_d": 0.0, "position_output_min:": -.inf, "position_output_max:": .inf,
-        "position_p": 13.4, "position_i": 0.0, "position_d": 0.898, "position_output_min:": -94.2, "position_output_max:": 94.2,
-        # "velocity_p": 0.4, "velocity_i": 0.0, "velocity_d": 0.0, "velocity_output_min:": -.inf, "velocity_output_max:": .inf,
+        # "position_p": 40.0, "position_i": 0.0, "position_d": 0.0, "position_output_min": -.inf, "position_output_max": .inf,
+        "position_p": 13.4, "position_i": 0.0, "position_d": 0.898, "position_output_min": -94.2, "position_output_max": 94.2,
+        # "velocity_p": 0.4, "velocity_i": 0.0, "velocity_d": 0.0, "velocity_output_min": -.inf, "velocity_output_max": .inf,
       }
 
 gz_ros_control:
