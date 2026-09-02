@@ -26,6 +26,7 @@
       <state_interface name="position" data_type="double"/>
       <state_interface name="velocity" data_type="double"/>
       <state_interface name="effort" data_type="double"/>
+      <param name="use_external_encoder">true</param>
     </joint>
   </ros2_control>
 </robot>

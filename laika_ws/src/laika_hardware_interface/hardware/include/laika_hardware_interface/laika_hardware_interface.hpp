@@ -37,6 +37,7 @@ class LaikaHardwareInterface : public hardware_interface::SystemInterface
     double motor_current_limit = std::numeric_limits<double>::quiet_NaN();
     double torque_limit = std::numeric_limits<double>::quiet_NaN();
     bool invert_direction = false;
+    bool use_external_encoder = false;
 
     // command variables
     double effort_command = 0.0;

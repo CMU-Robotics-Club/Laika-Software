@@ -56,6 +56,9 @@ namespace laika_hardware_interface
       if (joint_info.parameters.count("invert_direction")) {
         joint.invert_direction = (joint_info.parameters.at("invert_direction") == "true");
       }
+      if (joint_info.parameters.count("use_external_encoder")) {
+        joint.use_external_encoder = (joint_info.parameters.at("use_external_encoder") == "true");
+      }
 
       // set initial mode
       joint.mode = Modes::TORQUE_CONTROL;
@@ -67,6 +70,7 @@ namespace laika_hardware_interface
       RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "[PARAM]   motor-velocity-limit: %.1f [rev/s]", joint.motor_velocity_limit);
       RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "[PARAM]   motor-current-limit: %.1f [A]", joint.motor_current_limit);
       RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "[PARAM]   torque-limit: %.1f [Nm]", joint.torque_limit);
+      RCLCPP_INFO(rclcpp::get_logger("LaikaHardwareInterface"), "[PARAM]   use-external-encoder: %s", joint.use_external_encoder ? "true" : "false");
       joints.push_back(joint);
     }
     return hardware_interface::CallbackReturn::SUCCESS;
@@ -160,10 +164,13 @@ namespace laika_hardware_interface
       if(finish){
         // Joints fully initialized, now calulcating encoder offset
         for(auto &joint : joints) {
-          if(joint.name.find("knee") != std::string::npos){
+          if(joint.name.find("knee") != std::string::npos && joint.use_external_encoder){
             // Knee joint
             if(joint.joint_position_state_encoder != 0.0){
               // Encoder is initialized since encoder isn't the placeholder
+              // TODO: joint.joint_position_state_odrive is always 0 since it isn't calculated yet
+              // However, when we start the leg the odrives are zeroed out anyways so it shouldn't matter
+              // Something to think about
               joint.initial_offset = joint.joint_position_state_odrive - joint.joint_position_state_encoder;
               finish=true;
               break;
@@ -220,7 +227,8 @@ namespace laika_hardware_interface
       }
 
       // Only update the joint position for the hip, since for knee we have separate encoder
-      if(joint.name.find("hip") != std::string::npos){
+      // UNLESS use_external_encoder is false in which case we use odrive all the time
+      if(joint.name.find("hip") != std::string::npos || !joint.use_external_encoder){
         joint.joint_position_state = joint.joint_position_state_odrive;
         joint.joint_velocity_state = joint.joint_velocity_state_odrive;
       }
