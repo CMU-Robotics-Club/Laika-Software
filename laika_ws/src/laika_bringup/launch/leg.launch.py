@@ -11,10 +11,13 @@ def launch_setup(context, *args, **kwargs):
     # config = context.launch_configurations['config']
     controller_type = context.launch_configurations['controller_type']
     hardware = context.launch_configurations['hardware']
+    serial_port = context.launch_configurations['serial_port']
     print("")
     print("log_level:           " + log_level)
     print("controller_type:     " + controller_type)
     print("hardware:            " + hardware)
+    if hardware == 'usb':
+        print("serial_port:         " + serial_port)
     print("")
 
     if log_level == "default":
@@ -51,7 +54,8 @@ def launch_setup(context, *args, **kwargs):
         'slide': 'false',
         'leg_only': 'true',
         'simulation': 'false',
-        'usb': 'true' if hardware == 'usb' else 'false'
+        'usb': 'true' if hardware == 'usb' else 'false',
+        'serial_port': serial_port
     }).toxml()
     
     # robot description publisher
@@ -133,6 +137,13 @@ def generate_launch_description():
                 'hardware',
                 default_value='can',
                 description='How the Jetson reaches the motors: [can (SocketCAN to ODrives), usb (STM32 over USB)]'
+                )
+            )
+    launch_arguments.append(
+            DeclareLaunchArgument(
+                'serial_port',
+                default_value='/dev/ttyACM0',
+                description='hardware:=usb only: STM32 command port (CDC0). Prefer the stable /dev/serial/by-id/...-if00 path'
                 )
             )
     return LaunchDescription(launch_arguments + [OpaqueFunction(function=launch_setup)])

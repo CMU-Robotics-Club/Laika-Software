@@ -6,7 +6,7 @@
     <hardware>
       <plugin>laika_hardware_interface/LaikaUsbHardwareInterface</plugin>
       <!-- CDC0 (command port) of the STM32. /dev/serial/by-id/... is stable across replugs -->
-      <param name="serial_port">/dev/ttyACM0</param>
+      <param name="serial_port">$(arg serial_port)</param>
       <!-- CMD_JOINTS rate, protocol allows 50-200 Hz -->
       <param name="send_rate_hz">100</param>
     </hardware>

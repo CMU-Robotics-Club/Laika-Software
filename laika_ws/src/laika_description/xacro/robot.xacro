@@ -5,6 +5,7 @@
     <xacro:arg name="leg_only" default="false"/>
     <xacro:arg name="simulation" default="false"/>
     <xacro:arg name="usb" default="false"/>
+    <xacro:arg name="serial_port" default="/dev/ttyACM0"/>
 
     <xacro:include filename="$(find laika_description)/xacro/const.xacro"/>
     <xacro:include filename="$(find laika_description)/xacro/materials.xacro"/>
