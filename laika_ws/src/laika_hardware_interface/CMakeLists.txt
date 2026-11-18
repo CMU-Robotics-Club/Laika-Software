@@ -28,6 +28,7 @@ add_library(
   odrive_base/src/socket_can.cpp
   odrive_base/src/epoll_event_loop.cpp
   hardware/laika_hardware_interface.cpp
+  hardware/quads_usb_protocol.cpp
 )
 target_compile_features(laika_hardware_interface PUBLIC cxx_std_20)
 target_include_directories(laika_hardware_interface PRIVATE hardware/include)
@@ -49,5 +50,17 @@ install(
   DIRECTORY config
   DESTINATION share/${PROJECT_NAME}/
 )
+
+######### Tests (colcon test --packages-select laika_hardware_interface)
+if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
+  # Framing only: compiled on its own, no ROS needed
+  ament_add_gtest(test_quads_usb_protocol
+    test/test_quads_usb_protocol.cpp
+    hardware/quads_usb_protocol.cpp
+  )
+  target_compile_features(test_quads_usb_protocol PUBLIC cxx_std_20)
+  target_include_directories(test_quads_usb_protocol PRIVATE hardware/include)
+endif()
 
 ament_package()
