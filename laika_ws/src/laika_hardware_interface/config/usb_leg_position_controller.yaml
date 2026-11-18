@@ -1,0 +1,19 @@
+# Test setup for the USB hardware interface: send joint targets by hand, e.g.
+#   ros2 topic pub --once /position_controller/commands std_msgs/msg/Float64MultiArray "{data: [0.1, 0.2]}"
+# The order of `data` follows `joints` below (hip, knee).
+controller_manager:
+  ros__parameters:
+    update_rate: 200  # Hz; the hardware interface sends CMD_JOINTS at its own send_rate_hz
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    position_controller:
+      type: forward_command_controller/ForwardCommandController
+
+position_controller:
+  ros__parameters:
+    joints:
+      - hip_joint
+      - knee_joint
+    interface_name: position

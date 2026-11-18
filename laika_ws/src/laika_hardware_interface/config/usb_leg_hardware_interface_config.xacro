@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!-- Test leg over USB: Jetson -> STM32 (CMD_JOINTS) -> CAN -> ODrives.
+     The STM32 runs the PD loop; this hardware interface only streams targets. -->
+<robot name="laika" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <ros2_control name="LaikaUsbHardwareInterface" type="system">
+    <hardware>
+      <plugin>laika_hardware_interface/LaikaUsbHardwareInterface</plugin>
+      <!-- CDC0 (command port) of the STM32. /dev/serial/by-id/... is stable across replugs -->
+      <param name="serial_port">/dev/ttyACM0</param>
+      <!-- CMD_JOINTS rate, protocol allows 50-200 Hz -->
+      <param name="send_rate_hz">100</param>
+    </hardware>
+    <!-- usb_index = joint index in the firmware (quads_firmware Core/Inc/joint_interface.h:
+         KNEE_INDEX 0, HIP_INDEX 1). Positions are joint-side rad, relative to the pose
+         the firmware calibrated at power-on, NOT the URDF zero.
+         TBD: min/max below are a conservative test window, not the real joint limits. -->
+    <joint name="hip_joint">
+      <param name="usb_index">1</param>
+      <command_interface name="position">
+        <param name="min">-0.5</param>
+        <param name="max">0.5</param>
+      </command_interface>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="knee_joint">
+      <param name="usb_index">0</param>
+      <command_interface name="position">
+        <param name="min">-0.5</param>
+        <param name="max">0.5</param>
+      </command_interface>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+</robot>

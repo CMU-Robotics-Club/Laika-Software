@@ -4,6 +4,7 @@
     <xacro:arg name="slide" default="false"/>
     <xacro:arg name="leg_only" default="false"/>
     <xacro:arg name="simulation" default="false"/>
+    <xacro:arg name="usb" default="false"/>
 
     <xacro:include filename="$(find laika_description)/xacro/const.xacro"/>
     <xacro:include filename="$(find laika_description)/xacro/materials.xacro"/>
@@ -66,7 +67,14 @@
       </xacro:if>
       <!-- real -->
       <xacro:unless value="$(arg simulation)">
-        <xacro:include filename="$(find laika_hardware_interface)/config/real_leg_hardware_interface_config.xacro"/>
+        <!-- CAN direct to the ODrives -->
+        <xacro:unless value="$(arg usb)">
+          <xacro:include filename="$(find laika_hardware_interface)/config/real_leg_hardware_interface_config.xacro"/>
+        </xacro:unless>
+        <!-- USB to the STM32, which runs the PD loop -->
+        <xacro:if value="$(arg usb)">
+          <xacro:include filename="$(find laika_hardware_interface)/config/usb_leg_hardware_interface_config.xacro"/>
+        </xacro:if>
       </xacro:unless>
     </xacro:if>
 </robot>

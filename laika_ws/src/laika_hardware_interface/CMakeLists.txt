@@ -29,17 +29,20 @@ add_library(
   odrive_base/src/epoll_event_loop.cpp
   hardware/laika_hardware_interface.cpp
   hardware/quads_usb_protocol.cpp
+  hardware/usb_serial.cpp
+  hardware/laika_usb_hardware_interface.cpp
 )
 target_compile_features(laika_hardware_interface PUBLIC cxx_std_20)
 target_include_directories(laika_hardware_interface PRIVATE hardware/include)
 target_include_directories(laika_hardware_interface PRIVATE odrive_base/include)
-ament_target_dependencies(
-  laika_hardware_interface 
+# Modern CMake targets: ament_target_dependencies is gone in Lyrical, these work in Jazzy too
+target_link_libraries(
+  laika_hardware_interface
   PUBLIC
-  rclcpp
-  rclcpp_lifecycle
-  hardware_interface
-  pluginlib
+  rclcpp::rclcpp
+  rclcpp_lifecycle::rclcpp_lifecycle
+  hardware_interface::hardware_interface
+  pluginlib::pluginlib
 )
 pluginlib_export_plugin_description_file(hardware_interface laika_hardware_interface.xml)
 install(TARGETS laika_hardware_interface EXPORT export_laika_hardware_interface)
@@ -61,6 +64,20 @@ if(BUILD_TESTING)
   )
   target_compile_features(test_quads_usb_protocol PUBLIC cxx_std_20)
   target_include_directories(test_quads_usb_protocol PRIVATE hardware/include)
+
+  # Whole plugin against a pseudo-terminal instead of the STM32
+  ament_add_gtest(test_laika_usb_hardware_interface
+    test/test_laika_usb_hardware_interface.cpp
+    hardware/laika_usb_hardware_interface.cpp
+    hardware/usb_serial.cpp
+    hardware/quads_usb_protocol.cpp
+  )
+  target_compile_features(test_laika_usb_hardware_interface PUBLIC cxx_std_20)
+  target_include_directories(test_laika_usb_hardware_interface PRIVATE hardware/include)
+  target_link_libraries(test_laika_usb_hardware_interface
+    hardware_interface::hardware_interface rclcpp::rclcpp
+    rclcpp_lifecycle::rclcpp_lifecycle pluginlib::pluginlib
+    util)  # util: openpty
 endif()
 
 ament_package()

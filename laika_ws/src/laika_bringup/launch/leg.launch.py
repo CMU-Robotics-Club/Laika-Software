@@ -10,9 +10,11 @@ def launch_setup(context, *args, **kwargs):
     log_level = context.launch_configurations['log_level']
     # config = context.launch_configurations['config']
     controller_type = context.launch_configurations['controller_type']
+    hardware = context.launch_configurations['hardware']
     print("")
     print("log_level:           " + log_level)
     print("controller_type:     " + controller_type)
+    print("hardware:            " + hardware)
     print("")
 
     if log_level == "default":
@@ -27,6 +29,11 @@ def launch_setup(context, *args, **kwargs):
         controller_pkg = 'laika_cartesian_impedance_controller'
         controller_name = 'laika_cartesian_impedance_controller'
         config_filename = 'real_leg_impedance_controller_config.yaml'
+    elif controller_type == "position":
+        # Joint targets by hand (std_msgs/Float64MultiArray), PD runs on the STM32. Needs hardware:=usb
+        controller_pkg = 'laika_hardware_interface'
+        controller_name = 'position_controller'
+        config_filename = 'usb_leg_position_controller.yaml'
     elif controller_type == "simple_pid":
         controller_pkg = 'laika_simple_pid_controller'
         controller_name = 'laika_simple_pid_controller'
@@ -43,7 +50,8 @@ def launch_setup(context, *args, **kwargs):
         'fly': 'false',
         'slide': 'false',
         'leg_only': 'true',
-        'simulation': 'false'
+        'simulation': 'false',
+        'usb': 'true' if hardware == 'usb' else 'false'
     }).toxml()
     
     # robot description publisher
@@ -116,7 +124,15 @@ def generate_launch_description():
             DeclareLaunchArgument(
                 'controller_type',
                 default_value='pid',
-                description='Which controller to run: [pid, simple_pid, impedance]'
+                description='Which controller to run: [pid, simple_pid, impedance, position]'
+                )
+            )
+
+    launch_arguments.append(
+            DeclareLaunchArgument(
+                'hardware',
+                default_value='can',
+                description='How the Jetson reaches the motors: [can (SocketCAN to ODrives), usb (STM32 over USB)]'
                 )
             )
     return LaunchDescription(launch_arguments + [OpaqueFunction(function=launch_setup)])
