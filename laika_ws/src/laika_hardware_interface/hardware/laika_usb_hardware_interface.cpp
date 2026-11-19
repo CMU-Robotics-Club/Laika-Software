@@ -208,7 +208,17 @@ return_type LaikaUsbHardwareInterface::write(const rclcpp::Time & time, const rc
     quads_usb::kCmdJoints, seq_, payload, sizeof(payload), frame_, sizeof(frame_));
 
   const long w = serial_.write_some(frame_, n);
-  last_send_time_ = time;
+  // Step the send time by exactly one period instead of using `time`: with
+  // `last_send_time_ = time`, a call that comes a little late moves the whole
+  // schedule later, the next call then looks too early and a cycle is skipped
+  // (measured ~78 Hz instead of 100 Hz). After a long gap (first frame, or no
+  // target for a while) restart from now, so missed frames are not sent in a burst.
+  const auto period = rclcpp::Duration::from_seconds(send_period_s_);
+  if (!have_sent_ || time - last_send_time_ > period * 2) {
+    last_send_time_ = time;
+  } else {
+    last_send_time_ = last_send_time_ + period;
+  }
   have_sent_ = true;
   seq_ = static_cast<uint16_t>(seq_ + 1);  // the firmware counts gaps, so bump even on a drop
 
