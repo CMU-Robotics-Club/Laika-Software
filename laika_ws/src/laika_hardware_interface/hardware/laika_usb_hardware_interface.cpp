@@ -119,7 +119,10 @@ CallbackReturn LaikaUsbHardwareInterface::on_activate(const rclcpp_lifecycle::St
 
 CallbackReturn LaikaUsbHardwareInterface::on_deactivate(const rclcpp_lifecycle::State &)
 {
-  active_ = false;  // stop streaming; the firmware's command timeout takes over
+  // Stop streaming. Nothing is sent to tell the STM32 to stop: it relies on its own
+  // command timeout (quads_firmware branch feat/usb-cmd-timeout: no CMD_JOINTS for
+  // 100 ms -> FAULT, motors IDLE). Older firmware has no such timeout.
+  active_ = false;
   RCLCPP_INFO(kLogger, "Deactivated. Frames sent: %lu, dropped: %lu",
     static_cast<unsigned long>(frames_sent_), static_cast<unsigned long>(frames_dropped_));
   return CallbackReturn::SUCCESS;
@@ -230,7 +233,7 @@ return_type LaikaUsbHardwareInterface::write(const rclcpp::Time & time, const rc
   ++frames_dropped_;
   if (w < 0) {
     // e.g. the board was unplugged. Keep the controller manager running; the
-    // firmware's command timeout must stop the motors.
+    // firmware's command timeout must stop the motors (feat/usb-cmd-timeout, 100 ms).
     RCLCPP_ERROR_THROTTLE(kLogger, throttle_clock_, 1000,
       "Serial write failed: %s (dropped %lu frames)", std::strerror(errno),
       static_cast<unsigned long>(frames_dropped_));
