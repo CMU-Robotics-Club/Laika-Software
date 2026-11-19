@@ -19,8 +19,6 @@ namespace laika_hardware_interface::quads_usb
 
 // Message types (type byte on the wire)
 constexpr uint8_t kCmdJoints = 0x01;
-constexpr uint8_t kCmdGains = 0x03;
-constexpr uint8_t kAck = 0x83;
 
 // The protocol always carries 12 joints; unused ones are sent as 0
 constexpr size_t kMaxJoints = 12;

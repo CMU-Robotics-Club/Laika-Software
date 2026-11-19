@@ -6,6 +6,8 @@
 #include <cstring>
 #include <random>
 #include <set>
+#include <stdexcept>
+#include <string>
 
 #include "rclcpp/rclcpp.hpp"
 
@@ -18,6 +20,40 @@ const rclcpp::Logger kLogger = rclcpp::get_logger("LaikaUsbHardwareInterface");
 
 using hardware_interface::CallbackReturn;
 using hardware_interface::return_type;
+
+// std::stod / std::stoi throw on bad text, and an exception from on_init takes down
+// the whole controller manager. These return false instead, so on_init can log which
+// parameter is wrong and return ERROR. The whole string must be a number ("12abc"
+// and "1.5" for an int are rejected), and NaN/inf are rejected for doubles.
+bool parse_double(const std::string & text, double & out)
+{
+  try {
+    size_t used = 0;
+    const double value = std::stod(text, &used);
+    if (used != text.size() || !std::isfinite(value)) {
+      return false;
+    }
+    out = value;
+    return true;
+  } catch (const std::exception &) {  // invalid_argument or out_of_range
+    return false;
+  }
+}
+
+bool parse_int(const std::string & text, int & out)
+{
+  try {
+    size_t used = 0;
+    const int value = std::stoi(text, &used);
+    if (used != text.size()) {
+      return false;
+    }
+    out = value;
+    return true;
+  } catch (const std::exception &) {
+    return false;
+  }
+}
 }  // namespace
 
 ////////////////////// on_init: read and check parameters /////////////////////////
@@ -36,8 +72,10 @@ CallbackReturn LaikaUsbHardwareInterface::on_init(
   serial_port_ = hw.at("serial_port");
 
   double send_rate_hz = 100.0;
-  if (hw.count("send_rate_hz")) {
-    send_rate_hz = std::stod(hw.at("send_rate_hz"));
+  if (hw.count("send_rate_hz") && !parse_double(hw.at("send_rate_hz"), send_rate_hz)) {
+    RCLCPP_FATAL(kLogger, "[PARAM] send_rate_hz = '%s' is not a number",
+      hw.at("send_rate_hz").c_str());
+    return CallbackReturn::ERROR;
   }
   // Protocol: CMD_JOINTS at 50-200 Hz
   if (!(send_rate_hz >= 50.0 && send_rate_hz <= 200.0)) {
@@ -60,7 +98,12 @@ CallbackReturn LaikaUsbHardwareInterface::on_init(
         joint.name.c_str());
       return CallbackReturn::ERROR;
     }
-    const int idx = std::stoi(joint_info.parameters.at("usb_index"));
+    int idx = 0;
+    if (!parse_int(joint_info.parameters.at("usb_index"), idx)) {
+      RCLCPP_FATAL(kLogger, "[PARAM] Joint '%s': usb_index '%s' is not an integer",
+        joint.name.c_str(), joint_info.parameters.at("usb_index").c_str());
+      return CallbackReturn::ERROR;
+    }
     if (idx < 0 || static_cast<size_t>(idx) >= quads_usb::kMaxJoints ||
       !used_indices.insert(static_cast<size_t>(idx)).second)
     {
@@ -73,8 +116,13 @@ CallbackReturn LaikaUsbHardwareInterface::on_init(
     // Optional position clamp from <command_interface name="position"><param name="min"/max>
     for (const auto & ci : joint_info.command_interfaces) {
       if (ci.name == "position") {
-        if (!ci.min.empty()) {joint.min_position = std::stod(ci.min);}
-        if (!ci.max.empty()) {joint.max_position = std::stod(ci.max);}
+        if ((!ci.min.empty() && !parse_double(ci.min, joint.min_position)) ||
+          (!ci.max.empty() && !parse_double(ci.max, joint.max_position)))
+        {
+          RCLCPP_FATAL(kLogger, "[PARAM] Joint '%s': position min '%s' / max '%s' is not a number",
+            joint.name.c_str(), ci.min.c_str(), ci.max.c_str());
+          return CallbackReturn::ERROR;
+        }
       }
     }
 
