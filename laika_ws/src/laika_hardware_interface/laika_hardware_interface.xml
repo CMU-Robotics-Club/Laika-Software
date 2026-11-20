@@ -6,4 +6,11 @@
       The ros2_control example for odrive s1.
     </description>
   </class>
+  <class name="laika_hardware_interface/LaikaUsbHardwareInterface"
+         type="laika_hardware_interface::LaikaUsbHardwareInterface"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      Sends joint setpoints (CMD_JOINTS) to the STM32 over USB serial.
+    </description>
+  </class>
 </library>
